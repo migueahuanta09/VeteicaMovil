@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VETEICA CLINIC</string>
+
+    <!-- Login -->
+    <string name="login_title">VETEICA</string>
+    <string name="login_subtitle">CLINIC</string>
+    <string name="login_email">Correo electrónico</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_cedula">Cédula profesional</string>
+    <string name="login_button">ENTRAR</string>
+    <string name="login_register">Regístrate</string>
+    <string name="login_no_account">¿No tienes una cuenta?</string>
+    <string name="copyright">© 2025 Veterinaria Amor y lealtad</string>
+
+    <!-- Register -->
+    <string name="register_name">Nombre completo</string>
+    <string name="register_phone">Teléfono</string>
+    <string name="register_confirm_password">Confirmar contraseña</string>
+    <string name="register_button">REGISTRARSE</string>
+    <string name="register_have_account">¿Ya tienes cuenta?</string>
+    <string name="register_login">Iniciar sesión</string>
+
+    <!-- Common -->
+    <string name="welcome">¡Bienvenido a</string>
+    <string name="welcome_doctor">Dr.</string>
+    <string name="total_pets">Pacientes</string>
+    <string name="total_appointments">Citas hoy</string>
+    <string name="next_appointments">Próximas citas</string>
+    <string name="quick_access">Accesos rápidos</string>
+    <string name="new_pet">Nuevo Paciente</string>
+    <string name="new_appointment">Nueva Cita</string>
+    <string name="new_payment">Registrar Cobro</string>
+    <string name="reports">Reportes</string>
+    <string name="view_all">Ver todas</string>
+    <string name="save">GUARDAR</string>
+    <string name="cancel">CANCELAR</string>
+    <string name="edit">EDITAR</string>
+    <string name="delete">ELIMINAR</string>
+    <string name="search">Buscar...</string>
+
+    <!-- Pets -->
+    <string name="my_pets">Mis Pacientes</string>
+    <string name="pet_name">Nombre de la mascota</string>
+    <string name="pet_species">Especie</string>
+    <string name="pet_breed">Raza</string>
+    <string name="pet_age">Edad (años)</string>
+    <string name="pet_weight">Peso (kg)</string>
+    <string name="pet_gender">Sexo</string>
+    <string name="pet_color">Color</string>
+    <string name="pet_owner">Dueño</string>
+    <string name="pet_notes">Notas adicionales</string>
+
+    <!-- Appointments -->
+    <string name="my_appointments">Mis Citas</string>
+    <string name="appointment_date">Fecha</string>
+    <string name="appointment_time">Hora</string>
+    <string name="appointment_reason">Motivo</string>
+    <string name="appointment_status">Estado</string>
+
+    <!-- Payments -->
+    <string name="my_payments">Mis Cobros</string>
+    <string name="payment_amount">Monto</string>
+    <string name="payment_concept">Concepto</string>
+    <string name="payment_date">Fecha de pago</string>
+    <string name="payment_method">Método de pago</string>
+
+    <!-- Owners -->
+    <string name="my_owners">Mis Dueños</string>
+    <string name="owner_name">Nombre completo</string>
+    <string name="owner_address">Dirección</string>
+    <string name="owner_phone">Teléfono</string>
+    <string name="owner_email">Correo electrónico</string>
+</resources>

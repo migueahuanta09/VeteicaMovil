@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Inicio" />
+
+        <item
+            android:id="@+id/nav_pets"
+            android:icon="@drawable/ic_pet"
+            android:title="Pacientes" />
+
+        <item
+            android:id="@+id/nav_owners"
+            android:icon="@drawable/ic_user"
+            android:title="Dueños" />
+
+        <item
+            android:id="@+id/nav_appointments"
+            android:icon="@drawable/ic_calendar"
+            android:title="Citas" />
+
+        <item
+            android:id="@+id/nav_payments"
+            android:icon="@drawable/ic_money"
+            android:title="Cobros" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_user"
+            android:title="Perfil" />
+    </group>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Cerrar Sesión" />
+
+</menu>
