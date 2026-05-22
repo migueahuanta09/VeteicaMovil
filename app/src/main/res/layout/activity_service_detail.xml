@@ -38,20 +38,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Editar Producto"
+                    android:text="Cobro de Servicio"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
                 <TextView
-                    android:id="@+id/btnSaveToolbar"
+                    android:id="@+id/btnEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Guardar"
+                    android:text="Editar"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    android:textStyle="bold"
                     android:padding="12dp"
                     android:background="?attr/selectableItemBackgroundBorderless"/>
 
@@ -81,19 +80,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nombre del medicamento:"
+                        android:text="Nombre del servicio:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etProductName"
+                    <TextView
+                        android:id="@+id/tvServiceName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nobivac"
+                        android:text="Citas"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
                         android:layout_marginBottom="16dp"/>
 
                     <View
@@ -105,20 +102,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fecha de caducidad:"
+                        android:text="Cantidad:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etExpiryDate"
+                    <TextView
+                        android:id="@+id/tvQuantity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="20/10/2030"
+                        android:text="15"
                         android:textSize="14sp"
                         android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="date"/>
+                        android:layout_marginBottom="16dp"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -129,18 +123,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Dosis:"
+                        android:text="Veterinarios:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etDosage"
+                    <TextView
+                        android:id="@+id/tvVeterinarians"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1 dosis"
+                        android:text="2"
                         android:textSize="14sp"
                         android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
                         android:layout_marginBottom="16dp"/>
 
                     <View
@@ -155,92 +147,14 @@
                         android:text="Precio:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etPrice"
+                    <TextView
+                        android:id="@+id/tvPrice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1000"
+                        android:text="$100"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="#2E7D32"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="numberDecimal"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Indicaciones:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etIndications"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Para la inmunización activa contra la rabia"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:minHeight="80dp"
-                        android:gravity="top"
-                        android:inputType="textMultiLine"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fórmula farmacéutica:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etFormula"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Cultivo del virus"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:minHeight="80dp"
-                        android:gravity="top"
-                        android:inputType="textMultiLine"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Vía de administración:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etAdministration"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Subcutánea o intramuscular"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
+                        android:textColor="#FF9800"
                         android:layout_marginBottom="16dp"/>
 
                     <View
@@ -252,31 +166,37 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Existencia:"
+                        android:text="Descripción:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etStock"
+                    <TextView
+                        android:id="@+id/tvDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="10"
+                        android:text="Consulta general para mascotas"
                         android:textSize="14sp"
                         android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="number"/>
+                        android:layout_marginBottom="16dp"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Botones -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/btnSelect"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Seleccionar"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#2E7D32"
+                    android:layout_marginEnd="8dp"/>
 
                 <Button
                     android:id="@+id/btnCancel"
@@ -286,23 +206,12 @@
                     android:text="Cancelar"
                     android:textColor="#FF5722"
                     android:backgroundTint="@android:color/white"
-                    android:layout_marginEnd="8dp"/>
-
-                <Button
-                    android:id="@+id/btnSave"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:text="Guardar Cambios"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="#2E7D32"
                     android:layout_marginStart="8dp"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Footer -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
