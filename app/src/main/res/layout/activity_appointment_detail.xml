@@ -34,6 +34,7 @@
                     android:contentDescription="Volver"/>
 
                 <TextView
+                    android:id="@+id/tvToolbarTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -135,7 +136,7 @@
                         android:background="#E0E0E0"
                         android:layout_marginVertical="12dp"/>
 
-                    <!-- Fecha y Hora en misma fila -->
+                    <!-- Fecha y Hora -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -169,7 +170,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -259,10 +261,10 @@
                             android:id="@+id/tvStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Revisado"
+                            android:text="Pendiente"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:background="@drawable/bg_status_green"
+                            android:background="@drawable/bg_status_orange"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="4dp"/>
 
@@ -344,18 +346,38 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Botón Cancelar cita -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancel"
+            <!-- Botones de acción -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:text="Cancelar cita"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:cornerRadius="12dp"
-                android:backgroundTint="#FF5722"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Cancelar cita"
+                    android:textColor="#FF5722"
+                    android:textSize="14sp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#FF5722"
+                    app:strokeWidth="1.5dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnComplete"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Completar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:backgroundTint="#2E7D32"
+                    android:layout_marginStart="8dp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

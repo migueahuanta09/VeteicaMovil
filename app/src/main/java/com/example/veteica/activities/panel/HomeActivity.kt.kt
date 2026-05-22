@@ -24,6 +24,7 @@ import com.example.veteica.activities.pets.PetsActivity
 import com.example.veteica.activities.profile.ProfileActivity
 import com.example.veteica.adapters.AppointmentAdapter
 import com.example.veteica.models.Appointment
+import com.example.veteica.views.PieChartView
 
 class HomeActivity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
         setupDrawerLayout()
         setupMockData()
         setupClickListeners()
+        setupPieCharts()
     }
 
     private fun initViews() {
@@ -148,6 +150,26 @@ class HomeActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnReports).setOnClickListener {
             Toast.makeText(this, "Reportes - Próximamente", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setupPieCharts() {
+        // Gráfica de enfermedades
+        val pieChartDiseases = findViewById<PieChartView>(R.id.pieChartDiseases)
+        val diseasesData = listOf(
+            PieChartView.PieData("Infecciones", 45f, android.graphics.Color.parseColor("#4CAF50")),
+            PieChartView.PieData("Respiratorias", 30f, android.graphics.Color.parseColor("#FF9800")),
+            PieChartView.PieData("Digestivas", 25f, android.graphics.Color.parseColor("#F44336"))
+        )
+        pieChartDiseases.setData(diseasesData)
+
+        // Gráfica de tipos de mascotas
+        val pieChartPets = findViewById<PieChartView>(R.id.pieChartPets)
+        val petsData = listOf(
+            PieChartView.PieData("Perros", 60f, android.graphics.Color.parseColor("#4CAF50")),
+            PieChartView.PieData("Gatos", 25f, android.graphics.Color.parseColor("#FF9800")),
+            PieChartView.PieData("Otros", 15f, android.graphics.Color.parseColor("#2196F3"))
+        )
+        pieChartPets.setData(petsData)
     }
 
     override fun onBackPressed() {

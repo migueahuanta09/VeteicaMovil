@@ -23,8 +23,10 @@ import com.example.veteica.activities.pets.PetsActivity
 import com.example.veteica.activities.profile.ProfileActivity
 import com.example.veteica.adapters.ProductAdapter
 import com.example.veteica.adapters.ServiceAdapter
+import com.example.veteica.adapters.PendingPaymentAdapter
 import com.example.veteica.models.Product
 import com.example.veteica.models.Service
+import com.example.veteica.models.PendingPayment
 
 class PaymentsActivity : AppCompatActivity() {
 
@@ -33,16 +35,20 @@ class PaymentsActivity : AppCompatActivity() {
     private lateinit var btnMenu: ImageButton
     private lateinit var rvProducts: RecyclerView
     private lateinit var rvServices: RecyclerView
+    private lateinit var rvPendingPayments: RecyclerView
     private lateinit var etSearch: EditText
     private lateinit var btnSearch: ImageView
     private lateinit var btnCreateProduct: MaterialButton
     private lateinit var btnCreateService: MaterialButton
     private lateinit var productAdapter: ProductAdapter
     private lateinit var serviceAdapter: ServiceAdapter
+    private lateinit var pendingAdapter: PendingPaymentAdapter
     private val productsList = mutableListOf<Product>()
     private val originalProductsList = mutableListOf<Product>()
     private val servicesList = mutableListOf<Service>()
     private val originalServicesList = mutableListOf<Service>()
+    private val pendingList = mutableListOf<PendingPayment>()
+    private val originalPendingList = mutableListOf<PendingPayment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +68,7 @@ class PaymentsActivity : AppCompatActivity() {
         btnMenu = findViewById(R.id.btnMenu)
         rvProducts = findViewById(R.id.rvProducts)
         rvServices = findViewById(R.id.rvServices)
+        rvPendingPayments = findViewById(R.id.rvPendingPayments)
         etSearch = findViewById(R.id.etSearch)
         btnSearch = findViewById(R.id.btnSearch)
         btnCreateProduct = findViewById(R.id.btnCreateProduct)
@@ -124,6 +131,23 @@ class PaymentsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews() {
+        // Adaptador para cobros pendientes
+        pendingAdapter = PendingPaymentAdapter(pendingList) { payment ->
+            if (payment.status == "Pendiente") {
+                val intent = Intent(this, PendingPaymentDetailActivity::class.java)
+                intent.putExtra("payment_id", payment.id)
+                intent.putExtra("payment_pet", payment.petName)
+                intent.putExtra("payment_service", payment.serviceName)
+                intent.putExtra("payment_date", payment.date)
+                intent.putExtra("payment_total", payment.total)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Este cobro ya fue realizado", Toast.LENGTH_SHORT).show()
+            }
+        }
+        rvPendingPayments.layoutManager = LinearLayoutManager(this)
+        rvPendingPayments.adapter = pendingAdapter
+
         // Adaptador para productos
         productAdapter = ProductAdapter(productsList) { product ->
             val intent = Intent(this, PaymentDetailActivity::class.java)
@@ -146,6 +170,17 @@ class PaymentsActivity : AppCompatActivity() {
     }
 
     private fun setupMockData() {
+        // Datos de cobros pendientes
+        originalPendingList.addAll(listOf(
+            PendingPayment(1, "Lilo", "Consulta general", "20/10/2025", 100.0, "Pendiente"),
+            PendingPayment(2, "Max", "Cirugía", "15/10/2025", 21200.0, "Pendiente"),
+            PendingPayment(3, "Luna", "Vacunación", "10/10/2025", 350.0, "Cobrado"),
+            PendingPayment(4, "Rocky", "Observación", "05/10/2025", 600.0, "Pendiente"),
+            PendingPayment(5, "Bella", "Consulta general", "01/10/2025", 100.0, "Pendiente")
+        ))
+        pendingList.addAll(originalPendingList)
+        pendingAdapter.updateList(pendingList)
+
         // Datos de prueba para productos
         originalProductsList.addAll(listOf(
             Product(1, "Nobivac", 10, 1000.0, "20/10/2030", "1 dosis",
@@ -196,11 +231,20 @@ class PaymentsActivity : AppCompatActivity() {
         val query = etSearch.text.toString().lowercase().trim()
 
         if (query.isEmpty()) {
+            pendingList.clear()
+            pendingList.addAll(originalPendingList)
             productsList.clear()
             productsList.addAll(originalProductsList)
             servicesList.clear()
             servicesList.addAll(originalServicesList)
         } else {
+            val filteredPending = originalPendingList.filter {
+                it.id.toString().contains(query) ||
+                        it.petName.lowercase().contains(query)
+            }
+            pendingList.clear()
+            pendingList.addAll(filteredPending)
+
             val filteredProducts = originalProductsList.filter {
                 it.id.toString().contains(query) ||
                         it.name.lowercase().contains(query)
@@ -216,6 +260,7 @@ class PaymentsActivity : AppCompatActivity() {
             servicesList.addAll(filteredServices)
         }
 
+        pendingAdapter.updateList(pendingList)
         productAdapter.updateList(productsList)
         serviceAdapter.updateList(servicesList)
     }

@@ -37,22 +37,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Crear Producto"
+                    android:text="Detalle de Cobro"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
-
-                <TextView
-                    android:id="@+id/btnSaveToolbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Guardar"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
 
             </LinearLayout>
 
@@ -78,21 +67,35 @@
                     android:padding="20dp">
 
                     <TextView
+                        android:id="@+id/tvPaymentId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nombre del medicamento:"
+                        android:text="Cobro #1"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2E7D32"
+                        android:layout_marginBottom="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Paciente:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etProductName"
+                    <TextView
+                        android:id="@+id/tvPetName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Ej: Nobivac"
+                        android:text="Lilo"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
                         android:layout_marginBottom="16dp"/>
 
                     <View
@@ -104,42 +107,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fecha de caducidad:"
+                        android:text="Servicio:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etExpiryDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="DD/MM/AAAA"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="date"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dosis:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etDosage"
+                        android:id="@+id/tvServiceName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Ej: 1 dosis"
+                        android:text="Consulta general"
                         android:textSize="14sp"
                         android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
                         android:layout_marginBottom="16dp"/>
 
                     <View
@@ -151,95 +128,38 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Precio:"
+                        android:text="Fecha:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etPrice"
+                    <TextView
+                        android:id="@+id/tvDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="0"
+                        android:text="20/10/2025"
                         android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <TextView
+                        android:id="@+id/tvTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="$100"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#2E7D32"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="numberDecimal"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Indicaciones:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etIndications"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Indicaciones del medicamento"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:minHeight="80dp"
-                        android:gravity="top"
-                        android:inputType="textMultiLine"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fórmula farmacéutica:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etFormula"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Composición del medicamento"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:minHeight="80dp"
-                        android:gravity="top"
-                        android:inputType="textMultiLine"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Vía de administración:"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etAdministration"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Ej: Oral, Subcutánea"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
                         android:layout_marginBottom="16dp"/>
 
                     <View
@@ -251,20 +171,18 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Existencia:"
+                        android:text="Estado:"
                         android:textSize="12sp"
                         android:textColor="#999999"/>
-                    <EditText
-                        android:id="@+id/etStock"
+                    <TextView
+                        android:id="@+id/tvStatus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="0"
+                        android:text="Pendiente"
                         android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
-                        android:layout_marginBottom="16dp"
-                        android:inputType="number"/>
+                        android:textStyle="bold"
+                        android:textColor="#FF9800"
+                        android:layout_marginBottom="16dp"/>
 
                 </LinearLayout>
 
@@ -278,23 +196,25 @@
                 android:layout_marginTop="8dp">
 
                 <Button
-                    android:id="@+id/btnCancel"
+                    android:id="@+id/btnCharge"
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:text="Cancelar"
-                    android:textColor="#FF5722"
-                    android:backgroundTint="@android:color/white"
+                    android:text="Cobrar"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#2E7D32"
                     android:layout_marginEnd="8dp"/>
 
                 <Button
-                    android:id="@+id/btnSave"
+                    android:id="@+id/btnGeneratePdf"
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:text="Crear Producto"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="#2E7D32"
+                    android:text="Generar Ticket PDF"
+                    android:textColor="#FF9800"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#FF9800"
+                    app:strokeWidth="1.5dp"
                     android:layout_marginStart="8dp"/>
 
             </LinearLayout>

@@ -7,13 +7,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.button.MaterialButton
 import com.example.veteica.R
 
 class AppointmentDetailActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
     private lateinit var btnEdit: TextView
-    private lateinit var btnCancel: com.google.android.material.button.MaterialButton
+    private lateinit var btnComplete: MaterialButton
+    private lateinit var btnCancel: MaterialButton
     private lateinit var ivPetPhoto: ImageView
     private lateinit var tvPetName: TextView
     private lateinit var tvDate: TextView
@@ -25,6 +27,7 @@ class AppointmentDetailActivity : AppCompatActivity() {
     private lateinit var tvDiagnosis: TextView
 
     private var appointmentId: Int = 0
+    private var appointmentPetName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,7 @@ class AppointmentDetailActivity : AppCompatActivity() {
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
         btnEdit = findViewById(R.id.btnEdit)
+        btnComplete = findViewById(R.id.btnComplete)
         btnCancel = findViewById(R.id.btnCancel)
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         tvPetName = findViewById(R.id.tvPetName)
@@ -59,8 +63,9 @@ class AppointmentDetailActivity : AppCompatActivity() {
 
     private fun loadMockData() {
         appointmentId = intent.getIntExtra("appointment_id", 1)
+        appointmentPetName = intent.getStringExtra("appointment_pet") ?: "Lilo"
 
-        tvPetName.text = "Lilo"
+        tvPetName.text = appointmentPetName
         tvDate.text = "20/10/2025"
         tvTime.text = "10:00 AM"
         tvOwnerName.text = "Jose Herrera"
@@ -68,7 +73,7 @@ class AppointmentDetailActivity : AppCompatActivity() {
         tvReason.text = "Ligero problema en el oído."
         tvDiagnosis.text = "Infección en el oído."
 
-        updateStatusUI("Revisado")
+        updateStatusUI("Pendiente")
     }
 
     private fun updateStatusUI(status: String) {
@@ -77,8 +82,17 @@ class AppointmentDetailActivity : AppCompatActivity() {
         when (status) {
             "Pendiente" -> tvStatus.setBackgroundResource(R.drawable.bg_status_orange)
             "Confirmada" -> tvStatus.setBackgroundResource(R.drawable.bg_status_blue)
-            "Completada", "Revisado" -> tvStatus.setBackgroundResource(R.drawable.bg_status_green)
-            "Cancelada" -> tvStatus.setBackgroundResource(R.drawable.bg_status_red)
+            "Completada" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_status_green)
+                btnComplete.isEnabled = false
+                btnComplete.text = "Cita completada"
+            }
+            "Revisado" -> tvStatus.setBackgroundResource(R.drawable.bg_status_green)
+            "Cancelada" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_status_red)
+                btnCancel.isEnabled = false
+                btnComplete.isEnabled = false
+            }
         }
     }
 
@@ -93,11 +107,18 @@ class AppointmentDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        btnComplete.setOnClickListener {
+            Toast.makeText(this, "Cita marcada como Completada", Toast.LENGTH_SHORT).show()
+            updateStatusUI("Completada")
+
+            // Enviar a cobros pendientes
+            val message = "La cita de $appointmentPetName ha sido agregada a la lista de cobros pendientes"
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+
         btnCancel.setOnClickListener {
             Toast.makeText(this, "Cita cancelada", Toast.LENGTH_SHORT).show()
             updateStatusUI("Cancelada")
-            btnCancel.isEnabled = false
-            btnCancel.text = "Cita cancelada"
         }
     }
 }

@@ -44,6 +44,7 @@
         <activity android:name=".activities.payments.EditPaymentActivity" />
         <activity android:name=".activities.payments.EditServiceActivity" />
         <activity android:name=".activities.payments.CreateServiceActivity" />
+        <activity android:name=".activities.payments.PendingPaymentDetailActivity" />
         <activity android:name=".activities.payments.CreatePaymentActivity" />
 
         <!-- Profile -->
