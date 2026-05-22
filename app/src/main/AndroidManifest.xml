@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.VeteicaApp">
+
+        <!-- Auth -->
+        <activity android:name=".activities.auth.LoginActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.auth.RegisterActivity" />
+
+        <!-- Panel -->
+        <activity android:name=".activities.panel.HomeActivity" />
+
+        <!-- Pets -->
+        <activity android:name=".activities.pets.PetsActivity" />
+        <activity android:name=".activities.pets.PetDetailActivity" />
+        <activity android:name=".activities.pets.EditPetActivity" />
+        <activity android:name=".activities.pets.CreatePetActivity" />
+
+        <!-- Owners -->
+        <activity android:name=".activities.owners.OwnersActivity" />
+        <activity android:name=".activities.owners.OwnerDetailActivity" />
+        <activity android:name=".activities.owners.EditOwnerActivity" />
+        <activity android:name=".activities.owners.CreateOwnerActivity" />
+
+        <!-- Appointments -->
+        <activity android:name=".activities.appointments.AppointmentsActivity" />
+        <activity android:name=".activities.appointments.AppointmentDetailActivity" />
+        <activity android:name=".activities.appointments.EditAppointmentActivity" />
+        <activity android:name=".activities.appointments.CreateAppointmentActivity" />
+
+        <!-- Payments -->
+        <activity android:name=".activities.payments.PaymentsActivity" />
+        <activity android:name=".activities.payments.PaymentDetailActivity" />
+        <activity android:name=".activities.payments.ServiceDetailActivity" />
+        <activity android:name=".activities.payments.EditPaymentActivity" />
+        <activity android:name=".activities.payments.EditServiceActivity" />
+        <activity android:name=".activities.payments.CreateServiceActivity" />
+        <activity android:name=".activities.payments.PendingPaymentDetailActivity" />
+        <activity android:name=".activities.payments.CreatePaymentActivity" />
+
+        <!-- Profile -->
+        <activity android:name=".activities.profile.ProfileActivity" />
+
+    </application>
+
+</manifest>

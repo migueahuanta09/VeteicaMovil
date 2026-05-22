@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8E8E8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Logo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/logo_veteica"
+                android:contentDescription="Logo VETEICA"
+                android:layout_marginBottom="8dp"/>
+
+
+        </LinearLayout>
+
+        <!-- Panel blanco -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="30dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp"
+            android:background="@android:color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="28dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="REGISTRO"
+                    android:fontFamily="sans-serif-bold"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"
+                    android:gravity="center"
+                    android:layout_marginBottom="28dp"/>
+
+                <!-- Campo Nombre -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxBackgroundColor="#F0F0F0"
+                    app:boxStrokeColor="#999999"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNombre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nombre del veterinario"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:padding="12dp"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Apellido -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxBackgroundColor="#F0F0F0"
+                    app:boxStrokeColor="#999999"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etApellido"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Apellido del veterinario"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:padding="12dp"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Cédula profesional -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxBackgroundColor="#F0F0F0"
+                    app:boxStrokeColor="#999999"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCedula"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Cédula profesional"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:padding="12dp"
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Correo -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxBackgroundColor="#F0F0F0"
+                    app:boxStrokeColor="#999999"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Correo electrónico"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:padding="12dp"
+                        android:inputType="textEmailAddress"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Contraseña -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:endIconMode="password_toggle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxBackgroundColor="#F0F0F0"
+                    app:boxStrokeColor="#999999"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Agregar tu contraseña"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:padding="12dp"
+                        android:inputType="textPassword"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Teléfono -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="28dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxBackgroundColor="#F0F0F0"
+                    app:boxStrokeColor="#999999"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTelefono"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Teléfono"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:padding="12dp"
+                        android:inputType="phone"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Botones -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Botón Cancelar -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCancelar"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="Cancelar"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#FF5722"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="#FF5722"
+                        app:strokeWidth="1.5dp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <!-- Botón Registrarse -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRegistrarse"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="Registrarse"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@android:color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        android:backgroundTint="#95C681"
+                        android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <!-- Link a Login -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¿Ya tienes cuenta?"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#666666"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/tvLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" Iniciar sesión"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#2E7D32"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:fontFamily="sans-serif"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="24dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Barra azul -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#0c607d"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@android:color/white"
+                    android:contentDescription="Volver"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Crear Producto"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"/>
+
+                <TextView
+                    android:id="@+id/btnSaveToolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre del medicamento:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etProductName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Ej: Nobivac"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha de caducidad:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etExpiryDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="DD/MM/AAAA"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"
+                        android:inputType="date"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dosis:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etDosage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Ej: 1 dosis"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Precio:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="0"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2E7D32"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"
+                        android:inputType="numberDecimal"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Indicaciones:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etIndications"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Indicaciones del medicamento"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"
+                        android:minHeight="80dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fórmula farmacéutica:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etFormula"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Composición del medicamento"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"
+                        android:minHeight="80dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vía de administración:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etAdministration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Ej: Oral, Subcutánea"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Existencia:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"/>
+                    <EditText
+                        android:id="@+id/etStock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="0"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"
+                        android:inputType="number"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botones -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Cancelar"
+                    android:textColor="#FF5722"
+                    android:backgroundTint="@android:color/white"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Crear Producto"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#2E7D32"
+                    android:layout_marginStart="8dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

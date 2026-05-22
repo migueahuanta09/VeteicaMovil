@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="14dp"
+    android:paddingHorizontal="8dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textColor="#333333"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:textColor="#666666"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tvPetName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvOwnerName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textColor="#666666"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tvVeterinarian"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="#666666"
+        android:textSize="13sp"/>
+
+</LinearLayout>

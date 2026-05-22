@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Barra azul estándar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#0c607d"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Botón volver -->
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@android:color/white"
+                    android:contentDescription="Volver"/>
+
+                <!-- Título -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Editar Paciente"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"/>
+
+                <!-- Botón Guardar -->
+                <TextView
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Foto del perro (clic para cambiar) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="60dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/ivPetPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_pet"
+                    android:padding="20dp"
+                    android:background="#2E7D32"
+                    android:tint="@android:color/white"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tabla de información básica (EDITABLE) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Especie -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Especie"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etSpecies"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Perro"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Raza -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Raza"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etBreed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Labrador Retriever"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Edad -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edad"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etAge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="3 años"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Sexo -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sexo"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <Spinner
+                            android:id="@+id/spinnerGender"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Historial Clínico (NO EDITABLE - solo vista) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Historial Clínico"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Tabla Historial Clínico (solo vista) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Encabezados -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal"
+                        android:background="#2E7D32"
+                        android:paddingHorizontal="8dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.5"
+                            android:text="Consulta"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Fecha"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Diagnóstico"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Veterinario"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                    <!-- RecyclerView para el historial clínico -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvHistorialClinico"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Historial Vacunas (NO EDITABLE) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Historial Vacunas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Tabla Historial Vacunas -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Encabezados -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal"
+                        android:background="#FF9800"
+                        android:paddingHorizontal="8dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.5"
+                            android:text="Vacuna"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cantidad"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.5"
+                            android:text="Fecha"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                    <!-- RecyclerView para las vacunas -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvVacunas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Dueño Asociado (EDITABLE) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dueño Asociado"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Tabla Dueño Asociado -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Nombre -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Juan Pérez"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Teléfono -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Teléfono"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="555-1234-567"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"
+                            android:inputType="phone"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Dirección -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dirección"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Av. Principal #123, Col. Centro"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

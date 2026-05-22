@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Barra azul -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#0c607d"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@android:color/white"
+                    android:contentDescription="Volver"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Crear Cita"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"/>
+
+                <TextView
+                    android:id="@+id/btnSaveToolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Card principal con foto e info -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Fila con foto y nombre -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <!-- Foto de la mascota -->
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_circle_green"
+                            android:layout_marginEnd="16dp"
+                            android:clickable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:id="@+id/layoutPhoto">
+
+                            <ImageView
+                                android:id="@+id/ivPetPhoto"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:src="@drawable/ic_add_photo"
+                                android:tint="#2E7D32"/>
+
+                        </LinearLayout>
+
+                        <!-- Nombre de la mascota -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nombre de la mascota:"
+                                android:textSize="12sp"
+                                android:textColor="#999999"/>
+
+                            <EditText
+                                android:id="@+id/etPetName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Ej: Lilo"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:textColor="#333333"
+                                android:background="@drawable/bg_edit_text"
+                                android:padding="8dp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="12dp"/>
+
+                    <!-- Fecha y Hora -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Fecha:"
+                                android:textSize="12sp"
+                                android:textColor="#999999"/>
+
+                            <EditText
+                                android:id="@+id/etDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="DD/MM/AAAA"
+                                android:textSize="14sp"
+                                android:textColor="#333333"
+                                android:background="@drawable/bg_edit_text"
+                                android:padding="8dp"
+                                android:inputType="date"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hora:"
+                                android:textSize="12sp"
+                                android:textColor="#999999"/>
+
+                            <EditText
+                                android:id="@+id/etTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="HH:MM AM/PM"
+                                android:textSize="14sp"
+                                android:textColor="#333333"
+                                android:background="@drawable/bg_edit_text"
+                                android:padding="8dp"
+                                android:inputType="time"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Dueño -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dueño:"
+                            android:textSize="12sp"
+                            android:textColor="#999999"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Nombre del dueño"
+                            android:textSize="14sp"
+                            android:textColor="#333333"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="8dp"/>
+
+                    </LinearLayout>
+
+                    <!-- Veterinario -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Veterinario:"
+                            android:textSize="12sp"
+                            android:textColor="#999999"/>
+
+                        <EditText
+                            android:id="@+id/etVeterinarian"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Nombre del veterinario"
+                            android:textSize="14sp"
+                            android:textColor="#333333"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="8dp"/>
+
+                    </LinearLayout>
+
+                    <!-- Estado -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Estado:"
+                            android:textSize="12sp"
+                            android:textColor="#999999"/>
+
+                        <Spinner
+                            android:id="@+id/spinnerStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="8dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card Motivo -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Motivo:"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="8dp"/>
+
+                    <EditText
+                        android:id="@+id/etReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Motivo de la consulta"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:minHeight="80dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card Diagnóstico -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Diagnóstico:"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="8dp"/>
+
+                    <EditText
+                        android:id="@+id/etDiagnosis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Diagnóstico"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:minHeight="80dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botones: Cancelar y Guardar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Cancelar"
+                    android:textColor="#FF5722"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#FF5722"
+                    app:strokeWidth="1.5dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Crear Cita"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="#2E7D32"
+                    android:layout_marginStart="8dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Barra azul estándar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#0c607d"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Botón volver -->
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@android:color/white"
+                    android:contentDescription="Volver"/>
+
+                <!-- Título -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Crear Paciente"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"/>
+
+                <!-- Botón Guardar -->
+                <TextView
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Foto del perro (clic para agregar) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="60dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/ivPetPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_add_photo"
+                    android:padding="20dp"
+                    android:background="#2E7D32"
+                    android:tint="@android:color/white"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tabla de información básica -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Nombre -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Nombre de la mascota"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Especie -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Especie"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <Spinner
+                            android:id="@+id/spinnerSpecies"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Raza -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Raza"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etBreed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Raza"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Edad -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edad (años)"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etAge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Edad"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"
+                            android:inputType="number"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Peso -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Peso (kg)"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etWeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Peso"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"
+                            android:inputType="numberDecimal"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Sexo -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sexo"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <Spinner
+                            android:id="@+id/spinnerGender"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Color -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Color"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Color"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Dueño Asociado -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dueño Asociado"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Tabla Dueño Asociado -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Nombre -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Nombre del dueño"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Teléfono -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Teléfono"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Teléfono"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"
+                            android:inputType="phone"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Dirección -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dirección"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="4dp"/>
+
+                        <EditText
+                            android:id="@+id/etOwnerAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Dirección"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Notas adicionales -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Notas adicionales"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <EditText
+                        android:id="@+id/etNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:hint="Notas adicionales sobre el paciente..."
+                        android:textColor="#333333"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

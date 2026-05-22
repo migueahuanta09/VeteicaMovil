@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="8dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvVacunaNombre"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:text="Rabia"
+        android:textColor="#333333"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tvVacunaCantidad"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="1 dosis"
+        android:textColor="#666666"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tvVacunaFecha"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:text="10/01/2025"
+        android:textColor="#666666"
+        android:textSize="13sp"/>
+
+</LinearLayout>

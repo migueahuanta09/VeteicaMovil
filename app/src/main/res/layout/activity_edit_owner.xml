@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Barra azul estándar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#0c607d"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@android:color/white"
+                    android:contentDescription="Volver"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Editar Dueño"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Información del dueño EDITABLE -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <!-- Foto del dueño -->
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:gravity="center"
+                        android:background="@drawable/bg_circle_grey"
+                        android:layout_marginEnd="16dp"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:id="@+id/layoutPhoto">
+
+                        <TextView
+                            android:id="@+id/tvOwnerPhoto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="J"
+                            android:textColor="#666666"
+                            android:textSize="32sp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                    <!-- Datos del dueño EDITABLES -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_vertical">
+
+                        <EditText
+                            android:id="@+id/etOwnerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Jose Herrera"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:background="@drawable/bg_edit_text"
+                            android:padding="12dp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_email"
+                                android:tint="#666666"
+                                android:layout_marginEnd="8dp"/>
+
+                            <EditText
+                                android:id="@+id/etOwnerEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="jose@gmail.com"
+                                android:textColor="#333333"
+                                android:textSize="14sp"
+                                android:background="@drawable/bg_edit_text"
+                                android:padding="8dp"
+                                android:inputType="textEmailAddress"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_phone"
+                                android:tint="#666666"
+                                android:layout_marginEnd="8dp"/>
+
+                            <EditText
+                                android:id="@+id/etOwnerPhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="612-123-4567"
+                                android:textColor="#333333"
+                                android:textSize="14sp"
+                                android:background="@drawable/bg_edit_text"
+                                android:padding="8dp"
+                                android:inputType="phone"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_location"
+                                android:tint="#666666"
+                                android:layout_marginEnd="8dp"/>
+
+                            <EditText
+                                android:id="@+id/etOwnerAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Colonia Púrpura. calle 123"
+                                android:textColor="#333333"
+                                android:textSize="14sp"
+                                android:background="@drawable/bg_edit_text"
+                                android:padding="8dp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Mascotas Asociadas (SOLO VISTA) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mascotas asociadas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Tabla Mascotas Asociadas -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal"
+                        android:background="#2E7D32"
+                        android:paddingHorizontal="16dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nombre"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Mascotas"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPets"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Historial de Citas (SOLO VISTA) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Historial de citas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Tabla Historial de Citas -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal"
+                        android:background="#FF9800"
+                        android:paddingHorizontal="8dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.8"
+                            android:text="Consultas"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:text="Fechas"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Diagnósticos"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:text="Dr. v en turno"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvAppointments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botones: Guardar Cambios y Cancelar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Cancelar"
+                    android:textColor="#FF5722"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="#FF5722"
+                    app:strokeWidth="1.5dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="Guardar Cambios"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="#2E7D32"
+                    android:layout_marginStart="8dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView>
