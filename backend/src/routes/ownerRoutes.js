@@ -1,11 +1,15 @@
 const express = require('express');
 const router  = express.Router();
-const { obtenerOwners, obtenerOwner, crearOwner, actualizarOwner, eliminarOwner } = require('../controllers/ownerController');
+const { proteger } = require('../middleware/authMiddleware');
+const {
+  obtenerOwners, obtenerOwner,
+  crearOwner, actualizarOwner, eliminarOwner,
+} = require('../controllers/ownerController');
 
-router.get('/',       obtenerOwners);
-router.get('/:id',    obtenerOwner);
-router.post('/',      crearOwner);
-router.put('/:id',    actualizarOwner);
-router.delete('/:id', eliminarOwner);
+router.get('/',    proteger, obtenerOwners);
+router.get('/:id', proteger, obtenerOwner);
+router.post('/',   proteger, crearOwner);
+router.put('/:id', proteger, actualizarOwner);
+router.delete('/:id', proteger, eliminarOwner);
 
 module.exports = router;
