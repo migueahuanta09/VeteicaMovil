@@ -1,12 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
-    <TextView
-        android:layout_width="wrap_content"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pantalla de Citas"
-        android:textSize="24sp"/>
-</LinearLayout>
+        android:orientation="vertical">
+
+        <!-- Barra azul (PRIMERO) -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#0c607d"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="@android:color/white"
+                    android:contentDescription="Volver"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Perfil"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo_veteica"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Logo VETEICA"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Foto de perfil -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:id="@+id/layoutPhoto">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="4dp">
+
+                    <ImageView
+                        android:id="@+id/ivProfilePhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_user"
+                        android:scaleType="centerCrop"
+                        android:padding="20dp"
+                        android:tint="#2E7D32"/>
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cambiar foto"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+
+            <!-- Card de información -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Nombre -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre completo:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dra. María González"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="textCapWords"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Correo -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Correo electrónico:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="dra.maria@veteica.com"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="textEmailAddress"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Teléfono -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Teléfono:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="612-123-4567"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="phone"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Cédula profesional -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cédula profesional:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etCedula"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="VET-12345-6789"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="text"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Especialidad -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Especialidad:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etSpecialty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Medicina Interna"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="textCapWords"
+                        android:layout_marginBottom="8dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botón Guardar Cambios -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Guardar Cambios"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                android:backgroundTint="#2E7D32"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Botón Cerrar Sesión -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Cerrar Sesión"
+                android:textColor="#FF5722"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="#FF5722"
+                app:strokeWidth="1.5dp"/>
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2025 Veterinaria Amor y lealtad"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

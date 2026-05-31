@@ -4,17 +4,13 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingVertical="12dp"
-    android:paddingHorizontal="12dp"
+    android:paddingHorizontal="16dp"
     android:background="?attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/ivPetPhoto"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:src="@drawable/ic_pet"
-        android:scaleType="centerCrop"
-        android:background="@drawable/bg_circle_green"
-        android:padding="8dp"
         android:tint="#2E7D32"/>
 
     <LinearLayout
@@ -28,7 +24,7 @@
             android:id="@+id/tvPetName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="#333333"/>
 
@@ -36,14 +32,14 @@
             android:id="@+id/tvPetSpecies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:textColor="#666666"/>
 
         <TextView
             android:id="@+id/tvPetOwner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textColor="#999999"/>
 
     </LinearLayout>

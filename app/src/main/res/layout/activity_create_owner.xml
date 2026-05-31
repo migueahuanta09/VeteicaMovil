@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Barra azul estándar -->
+        <!-- Barra azul -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -43,6 +43,17 @@
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
+                <TextView
+                    android:id="@+id/btnSaveToolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -53,7 +64,45 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Panel blanco -->
+            <!-- Foto del dueño -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:id="@+id/layoutPhoto">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="4dp">
+
+                    <ImageView
+                        android:id="@+id/ivOwnerPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_user"
+                        android:scaleType="centerCrop"
+                        android:padding="20dp"
+                        android:tint="#2E7D32"/>
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Agregar foto"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+
+            <!-- Card de información -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,263 +116,104 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Agregar Imagen -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:layout_marginBottom="24dp"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:id="@+id/layoutPhoto">
-
-                        <LinearLayout
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:gravity="center"
-                            android:background="@drawable/bg_circle_grey">
-
-                            <TextView
-                                android:id="@+id/tvAddPhoto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="+"
-                                android:textColor="#666666"
-                                android:textSize="40sp"
-                                android:textStyle="bold"/>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Agregar Imagen"
-                            android:textColor="#2E7D32"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp"/>
-
-                    </LinearLayout>
-
-                    <!-- Campo Nombre -->
+                    <!-- Nombre -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nombre:"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
+                        android:text="Nombre completo:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <EditText
+                        android:id="@+id/etName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#F5F5F5">
+                        android:hint="Nombre completo"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etOwnerName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Nombre completo"
-                            android:textSize="14sp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Campo Teléfono -->
+                    <!-- Teléfono -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Número de teléfono:"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
+                        android:text="Teléfono:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <EditText
+                        android:id="@+id/etPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#F5F5F5">
+                        android:hint="Teléfono"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="phone"
+                        android:layout_marginBottom="16dp"/>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etOwnerPhone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Teléfono"
-                            android:inputType="phone"
-                            android:textSize="14sp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Campo Correo -->
+                    <!-- Correo -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Correo electrónico:"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <EditText
+                        android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#F5F5F5">
+                        android:hint="correo@ejemplo.com"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="textEmailAddress"
+                        android:layout_marginBottom="16dp"/>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etOwnerEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="correo@ejemplo.com"
-                            android:inputType="textEmailAddress"
-                            android:textSize="14sp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Campo Dirección -->
+                    <!-- Dirección -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Dirección:"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <EditText
+                        android:id="@+id/etAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#F5F5F5">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etOwnerAddress"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Dirección completa"
-                            android:textSize="14sp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Título Mascotas asociadas -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Mascotas asociadas:"
-                        android:textStyle="bold"
+                        android:hint="Dirección"
+                        android:textSize="14sp"
                         android:textColor="#333333"
-                        android:layout_marginBottom="12dp"
-                        android:layout_marginTop="8dp"/>
-
-                    <!-- Lista de mascotas agregadas -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="1dp"
-                        android:layout_marginBottom="12dp">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvPets"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp"/>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- Agregar mascota -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="24dp">
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginEnd="8dp"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            app:boxCornerRadiusTopStart="12dp"
-                            app:boxCornerRadiusTopEnd="12dp"
-                            app:boxCornerRadiusBottomStart="12dp"
-                            app:boxCornerRadiusBottomEnd="12dp"
-                            app:boxBackgroundColor="#F5F5F5">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etPetName"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Nombre de la mascota"
-                                android:textSize="14sp"/>
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnAddPet"
-                            android:layout_width="wrap_content"
-                            android:layout_height="56dp"
-                            android:text="Agregar"
-                            android:textColor="@android:color/white"
-                            android:backgroundTint="#2E7D32"
-                            app:cornerRadius="12dp"
-                            android:paddingHorizontal="16dp"/>
-
-                    </LinearLayout>
-
-                    <!-- Botones: Crear y Cancelar -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCancel"
-                            android:layout_width="0dp"
-                            android:layout_height="52dp"
-                            android:layout_weight="1"
-                            android:text="Cancelar"
-                            android:textColor="#FF5722"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            app:cornerRadius="12dp"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            app:strokeColor="#FF5722"
-                            app:strokeWidth="1.5dp"
-                            android:layout_marginEnd="8dp"/>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCreate"
-                            android:layout_width="0dp"
-                            android:layout_height="52dp"
-                            android:layout_weight="1"
-                            android:text="Crear"
-                            android:textColor="@android:color/white"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            app:cornerRadius="12dp"
-                            android:backgroundTint="#2E7D32"
-                            android:layout_marginStart="8dp"/>
-
-                    </LinearLayout>
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+            <!-- Botón Crear -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreate"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Crear Dueño"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                android:backgroundTint="#2E7D32"
+                android:layout_marginBottom="12dp"/>
 
         </LinearLayout>
 

@@ -6,5 +6,6 @@ data class Owner(
     val phone: String = "",
     val email: String = "",
     val address: String = "",
-    val petsCount: Int = 0
+    val petsCount: Int = 0,
+    val photoUri: String? = null
 )

@@ -1,7 +1,9 @@
 package com.example.veteica.adapters
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veteica.R
@@ -34,7 +36,7 @@ class OwnerAdapter(
         private val onItemClick: (Owner) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
-        private val tvId: TextView = itemView.findViewById(R.id.tvId)
+        private val ivOwnerPhoto: ImageView = itemView.findViewById(R.id.ivOwnerPhoto)
         private val tvName: TextView = itemView.findViewById(R.id.tvName)
         private val tvPhone: TextView = itemView.findViewById(R.id.tvPhone)
         private val tvPetsCount: TextView = itemView.findViewById(R.id.tvPetsCount)
@@ -48,10 +50,28 @@ class OwnerAdapter(
 
         fun bind(owner: Owner) {
             currentOwner = owner
-            tvId.text = owner.id.toString()
             tvName.text = owner.name
             tvPhone.text = owner.phone
             tvPetsCount.text = "${owner.petsCount} mascotas"
+
+            // Cargar foto si existe
+            owner.photoUri?.let { uriString ->
+                try {
+                    val uri = Uri.parse(uriString)
+                    ivOwnerPhoto.setImageURI(uri)
+                    ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                    ivOwnerPhoto.setPadding(0, 0, 0, 0)
+                    ivOwnerPhoto.setColorFilter(null)
+                } catch (e: Exception) {
+                    setDefaultPhoto()
+                }
+            } ?: setDefaultPhoto()
+        }
+
+        private fun setDefaultPhoto() {
+            ivOwnerPhoto.setImageResource(R.drawable.ic_user)
+            ivOwnerPhoto.setColorFilter(itemView.context.getColor(R.color.veteica_green))
+            ivOwnerPhoto.setPadding(12, 12, 12, 12)
         }
     }
 }

@@ -10,5 +10,6 @@ data class Pet(
     val gender: String = "",
     val color: String = "",
     val ownerName: String = "",
-    val notes: String = ""
+    val notes: String = "",
+    val photoUri: String? = null
 )

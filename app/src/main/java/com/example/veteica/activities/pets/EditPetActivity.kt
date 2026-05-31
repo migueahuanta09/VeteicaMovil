@@ -1,6 +1,13 @@
 package com.example.veteica.activities.pets
 
+import android.app.AlertDialog
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
@@ -9,29 +16,32 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.veteica.R
-import com.example.veteica.adapters.HistorialAdapter
-import com.example.veteica.adapters.VacunaAdapter
-import com.example.veteica.models.Historial
-import com.example.veteica.models.Vacuna
 
 class EditPetActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSave: TextView
+    private lateinit var btnSaveToolbar: TextView
+    private lateinit var btnUpdate: com.google.android.material.button.MaterialButton
+    private lateinit var layoutPhoto: android.widget.LinearLayout
     private lateinit var ivPetPhoto: ImageView
-    private lateinit var etSpecies: EditText
+    private lateinit var etName: EditText
+    private lateinit var spinnerSpecies: Spinner
     private lateinit var etBreed: EditText
     private lateinit var etAge: EditText
+    private lateinit var etWeight: EditText
     private lateinit var spinnerGender: Spinner
+    private lateinit var etColor: EditText
     private lateinit var etOwnerName: EditText
-    private lateinit var etOwnerPhone: EditText
-    private lateinit var etOwnerAddress: EditText
-    private lateinit var rvHistorialClinico: RecyclerView
-    private lateinit var rvVacunas: RecyclerView
+    private lateinit var etNotes: EditText
+
     private var petId: Int = 0
+    private var currentPhotoUri: Uri? = null
+    private val REQUEST_CODE_CAMERA = 100
+    private val REQUEST_CODE_GALLERY = 101
+    private val REQUEST_CODE_PERMISSIONS = 102
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,24 +49,26 @@ class EditPetActivity : AppCompatActivity() {
 
         initViews()
         setupToolbar()
-        setupSpinner()
-        loadMockData()
+        setupSpinners()
+        loadPetData()
         setupClickListeners()
     }
 
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
-        btnSave = findViewById(R.id.btnSave)
+        btnSaveToolbar = findViewById(R.id.btnSaveToolbar)
+        btnUpdate = findViewById(R.id.btnUpdate)
+        layoutPhoto = findViewById(R.id.layoutPhoto)
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
-        etSpecies = findViewById(R.id.etSpecies)
+        etName = findViewById(R.id.etName)
+        spinnerSpecies = findViewById(R.id.spinnerSpecies)
         etBreed = findViewById(R.id.etBreed)
         etAge = findViewById(R.id.etAge)
+        etWeight = findViewById(R.id.etWeight)
         spinnerGender = findViewById(R.id.spinnerGender)
+        etColor = findViewById(R.id.etColor)
         etOwnerName = findViewById(R.id.etOwnerName)
-        etOwnerPhone = findViewById(R.id.etOwnerPhone)
-        etOwnerAddress = findViewById(R.id.etOwnerAddress)
-        rvHistorialClinico = findViewById(R.id.rvHistorialClinico)
-        rvVacunas = findViewById(R.id.rvVacunas)
+        etNotes = findViewById(R.id.etNotes)
     }
 
     private fun setupToolbar() {
@@ -65,51 +77,33 @@ class EditPetActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun setupSpinner() {
-        val genders = arrayOf("Macho", "Hembra")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, genders)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerGender.adapter = adapter
+    private fun setupSpinners() {
+        val speciesList = arrayOf("Perro", "Gato", "Conejo", "Ave", "Reptil", "Otro")
+        val speciesAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, speciesList)
+        speciesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerSpecies.adapter = speciesAdapter
+
+        val genderList = arrayOf("Macho", "Hembra")
+        val genderAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, genderList)
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerGender.adapter = genderAdapter
     }
 
-    private fun loadMockData() {
+    private fun loadPetData() {
         petId = intent.getIntExtra("pet_id", 1)
-        val petName = intent.getStringExtra("pet_name") ?: "Lilo"
+        val petName = intent.getStringExtra("pet_name") ?: "Max"
 
-        supportActionBar?.title = "Editar $petName"
-
-        // Cargar datos existentes
-        etSpecies.setText("Perro")
+        // Datos mock para edición
+        etName.setText(petName)
+        // Seleccionar especie "Perro" (posición 0)
+        spinnerSpecies.setSelection(0)
         etBreed.setText("Labrador Retriever")
         etAge.setText("3")
+        etWeight.setText("28.5")
         spinnerGender.setSelection(0) // Macho
+        etColor.setText("Dorado")
         etOwnerName.setText("Juan Pérez")
-        etOwnerPhone.setText("555-1234-567")
-        etOwnerAddress.setText("Av. Principal #123, Col. Centro")
-
-        // Historial Clínico (solo vista)
-        val historialList = listOf(
-            Historial(1, "Consulta general", "15/01/2025", "Infección respiratoria", "Dra. María González"),
-            Historial(2, "Vacunación", "10/01/2025", "Vacuna antirrábica", "Dr. Carlos López"),
-            Historial(3, "Revisión", "05/01/2025", "Control de peso", "Dra. Ana Martínez")
-        )
-
-        rvHistorialClinico.layoutManager = LinearLayoutManager(this)
-        rvHistorialClinico.adapter = HistorialAdapter(historialList) { historial ->
-            Toast.makeText(this, "Consulta: ${historial.consulta}", Toast.LENGTH_SHORT).show()
-        }
-
-        // Historial Vacunas (solo vista)
-        val vacunasList = listOf(
-            Vacuna(1, "Rabia", "1 dosis", "10/01/2025"),
-            Vacuna(2, "Parvovirus", "3 dosis", "05/01/2025"),
-            Vacuna(3, "Moquillo", "2 dosis", "01/01/2025")
-        )
-
-        rvVacunas.layoutManager = LinearLayoutManager(this)
-        rvVacunas.adapter = VacunaAdapter(vacunasList) { vacuna ->
-            Toast.makeText(this, "Vacuna: ${vacuna.nombre}", Toast.LENGTH_SHORT).show()
-        }
+        etNotes.setText("Paciente activo, sin alergias conocidas")
     }
 
     private fun setupClickListeners() {
@@ -117,26 +111,140 @@ class EditPetActivity : AppCompatActivity() {
             finish()
         }
 
-        ivPetPhoto.setOnClickListener {
-            Toast.makeText(this, "Cambiar foto - Próximamente", Toast.LENGTH_SHORT).show()
+        layoutPhoto.setOnClickListener {
+            showImagePickerDialog()
         }
 
-        btnSave.setOnClickListener {
-            val species = etSpecies.text.toString()
-            val breed = etBreed.text.toString()
-            val age = etAge.text.toString()
-            val gender = spinnerGender.selectedItem.toString()
-            val ownerName = etOwnerName.text.toString()
-            val ownerPhone = etOwnerPhone.text.toString()
-            val ownerAddress = etOwnerAddress.text.toString()
+        btnSaveToolbar.setOnClickListener {
+            updatePet()
+        }
 
-            if (species.isEmpty() || breed.isEmpty() || age.isEmpty() || ownerName.isEmpty()) {
-                Toast.makeText(this, "Completa los campos obligatorios", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        btnUpdate.setOnClickListener {
+            updatePet()
+        }
+    }
+
+    private fun showImagePickerDialog() {
+        val options = arrayOf("Tomar foto", "Seleccionar de galería", "Cancelar")
+        AlertDialog.Builder(this)
+            .setTitle("Seleccionar foto")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> checkPermissionsAndOpenCamera()
+                    1 -> openGallery()
+                }
             }
+            .show()
+    }
 
-            Toast.makeText(this, "Paciente actualizado correctamente", Toast.LENGTH_SHORT).show()
-            finish()
+    private fun checkPermissionsAndOpenCamera() {
+        val permissions = arrayOf(
+            android.Manifest.permission.CAMERA
+        )
+
+        val hasPermissions = permissions.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (hasPermissions) {
+            openCamera()
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(packageManager) != null) {
+            val photoUri = createImageUri()
+            photoUri?.let {
+                currentPhotoUri = it
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, it)
+                startActivityForResult(intent, REQUEST_CODE_CAMERA)
+            }
+        } else {
+            Toast.makeText(this, "No se puede abrir la cámara", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun createImageUri(): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "JPEG_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Veteica")
+            }
+        }
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_CODE_GALLERY)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                openCamera()
+            } else {
+                Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CODE_CAMERA -> {
+                    currentPhotoUri?.let { uri ->
+                        ivPetPhoto.setImageURI(uri)
+                        ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                        ivPetPhoto.setPadding(0, 0, 0, 0)
+                        ivPetPhoto.setColorFilter(null)
+                    }
+                }
+                REQUEST_CODE_GALLERY -> {
+                    val uri = data?.data
+                    uri?.let {
+                        currentPhotoUri = it
+                        ivPetPhoto.setImageURI(it)
+                        ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                        ivPetPhoto.setPadding(0, 0, 0, 0)
+                        ivPetPhoto.setColorFilter(null)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updatePet() {
+        val name = etName.text.toString().trim()
+        val species = spinnerSpecies.selectedItem.toString()
+        val breed = etBreed.text.toString().trim()
+        val age = etAge.text.toString().trim()
+        val weight = etWeight.text.toString().trim()
+        val gender = spinnerGender.selectedItem.toString()
+        val color = etColor.text.toString().trim()
+        val ownerName = etOwnerName.text.toString().trim()
+        val notes = etNotes.text.toString().trim()
+
+        when {
+            name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre de la mascota", Toast.LENGTH_SHORT).show()
+            breed.isEmpty() -> Toast.makeText(this, "Ingresa la raza", Toast.LENGTH_SHORT).show()
+            age.isEmpty() -> Toast.makeText(this, "Ingresa la edad", Toast.LENGTH_SHORT).show()
+            ownerName.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
+            else -> {
+                Toast.makeText(this, "Paciente $name actualizado correctamente", Toast.LENGTH_LONG).show()
+                finish()
+            }
         }
     }
 }

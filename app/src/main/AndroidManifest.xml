@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- PERMISOS PARA CÁMARA Y ALMACENAMIENTO -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.VeteicaApp">
 
-        <!-- Auth -->
-        <activity android:name=".activities.auth.LoginActivity" android:exported="true">
+        <!-- ==================== AUTH ==================== -->
+        <activity
+            android:name=".activities.auth.LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -16,39 +23,50 @@
         </activity>
         <activity android:name=".activities.auth.RegisterActivity" />
 
-        <!-- Panel -->
+        <!-- ==================== PANEL ==================== -->
         <activity android:name=".activities.panel.HomeActivity" />
 
-        <!-- Pets -->
+        <!-- ==================== PETS (MASCOTAS) ==================== -->
         <activity android:name=".activities.pets.PetsActivity" />
         <activity android:name=".activities.pets.PetDetailActivity" />
         <activity android:name=".activities.pets.EditPetActivity" />
         <activity android:name=".activities.pets.CreatePetActivity" />
 
-        <!-- Owners -->
+        <!-- ==================== OWNERS (DUEÑOS) ==================== -->
         <activity android:name=".activities.owners.OwnersActivity" />
         <activity android:name=".activities.owners.OwnerDetailActivity" />
         <activity android:name=".activities.owners.EditOwnerActivity" />
         <activity android:name=".activities.owners.CreateOwnerActivity" />
 
-        <!-- Appointments -->
+        <!-- ==================== APPOINTMENTS (CITAS) ==================== -->
         <activity android:name=".activities.appointments.AppointmentsActivity" />
         <activity android:name=".activities.appointments.AppointmentDetailActivity" />
         <activity android:name=".activities.appointments.EditAppointmentActivity" />
         <activity android:name=".activities.appointments.CreateAppointmentActivity" />
 
-        <!-- Payments -->
+        <!-- ==================== PAYMENTS (COBROS) ==================== -->
         <activity android:name=".activities.payments.PaymentsActivity" />
         <activity android:name=".activities.payments.PaymentDetailActivity" />
         <activity android:name=".activities.payments.ServiceDetailActivity" />
+        <activity android:name=".activities.payments.PendingPaymentDetailActivity" />
         <activity android:name=".activities.payments.EditPaymentActivity" />
         <activity android:name=".activities.payments.EditServiceActivity" />
-        <activity android:name=".activities.payments.CreateServiceActivity" />
-        <activity android:name=".activities.payments.PendingPaymentDetailActivity" />
         <activity android:name=".activities.payments.CreatePaymentActivity" />
+        <activity android:name=".activities.payments.CreateServiceActivity" />
 
-        <!-- Profile -->
+        <!-- ==================== PROFILE (PERFIL) ==================== -->
         <activity android:name=".activities.profile.ProfileActivity" />
+
+        <!-- ==================== FILE PROVIDER PARA CÁMARA ==================== -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

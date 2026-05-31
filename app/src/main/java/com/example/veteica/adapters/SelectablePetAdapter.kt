@@ -1,23 +1,20 @@
 package com.example.veteica.adapters
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veteica.R
 import com.example.veteica.models.Pet
-import java.io.File
 
-class PetAdapter(
+class SelectablePetAdapter(
     private var pets: List<Pet>,
     private val onItemClick: (Pet) -> Unit
-) : RecyclerView.Adapter<PetAdapter.PetViewHolder>() {
+) : RecyclerView.Adapter<SelectablePetAdapter.PetViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_pet, parent, false)
+            .inflate(R.layout.item_selectable_pet, parent, false)
         return PetViewHolder(view, onItemClick)
     }
 
@@ -27,17 +24,11 @@ class PetAdapter(
 
     override fun getItemCount(): Int = pets.size
 
-    fun updateList(newList: List<Pet>) {
-        pets = newList
-        notifyDataSetChanged()
-    }
-
     class PetViewHolder(
         itemView: android.view.View,
         private val onItemClick: (Pet) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
-        private val ivPetPhoto: ImageView = itemView.findViewById(R.id.ivPetPhoto)
         private val tvPetName: TextView = itemView.findViewById(R.id.tvPetName)
         private val tvPetSpecies: TextView = itemView.findViewById(R.id.tvPetSpecies)
         private val tvPetOwner: TextView = itemView.findViewById(R.id.tvPetOwner)
@@ -52,27 +43,8 @@ class PetAdapter(
         fun bind(pet: Pet) {
             currentPet = pet
             tvPetName.text = pet.name
-            tvPetSpecies.text = "${pet.species} - ${pet.breed}"
+            tvPetSpecies.text = pet.species
             tvPetOwner.text = "Dueño: ${pet.ownerName}"
-
-            // Cargar foto si existe (sin librerías externas)
-            pet.photoUri?.let { uriString ->
-                try {
-                    val uri = Uri.parse(uriString)
-                    ivPetPhoto.setImageURI(uri)
-                    ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                    ivPetPhoto.setPadding(0, 0, 0, 0)
-                    ivPetPhoto.setColorFilter(null)
-                } catch (e: Exception) {
-                    setDefaultPhoto()
-                }
-            } ?: setDefaultPhoto()
-        }
-
-        private fun setDefaultPhoto() {
-            ivPetPhoto.setImageResource(R.drawable.ic_pet)
-            ivPetPhoto.setColorFilter(itemView.context.getColor(R.color.veteica_green))
-            ivPetPhoto.setPadding(12, 12, 12, 12)
         }
     }
 }

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Barra azul estándar -->
+        <!-- Barra azul -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -43,6 +43,17 @@
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
+                <TextView
+                    android:id="@+id/btnSaveToolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -53,7 +64,45 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Información del dueño EDITABLE -->
+            <!-- Foto del dueño -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:id="@+id/layoutPhoto">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="4dp">
+
+                    <ImageView
+                        android:id="@+id/ivOwnerPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_user"
+                        android:scaleType="centerCrop"
+                        android:padding="20dp"
+                        android:tint="#2E7D32"/>
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cambiar foto"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+
+            <!-- Card de información -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,144 +113,119 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <!-- Foto del dueño -->
-                    <LinearLayout
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:gravity="center"
-                        android:background="@drawable/bg_circle_grey"
-                        android:layout_marginEnd="16dp"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:id="@+id/layoutPhoto">
-
-                        <TextView
-                            android:id="@+id/tvOwnerPhoto"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="J"
-                            android:textColor="#666666"
-                            android:textSize="32sp"
-                            android:textStyle="bold"/>
-
-                    </LinearLayout>
-
-                    <!-- Datos del dueño EDITABLES -->
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center_vertical">
+                        android:text="Nombre completo:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
-                        <EditText
-                            android:id="@+id/etOwnerName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Jose Herrera"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="#333333"
-                            android:background="@drawable/bg_edit_text"
-                            android:padding="12dp"
-                            android:layout_marginBottom="8dp"/>
+                    <EditText
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="José Herrera"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Teléfono:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_email"
-                                android:tint="#666666"
-                                android:layout_marginEnd="8dp"/>
+                    <EditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="612-123-4567"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="phone"
+                        android:layout_marginBottom="16dp"/>
 
-                            <EditText
-                                android:id="@+id/etOwnerEmail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="jose@gmail.com"
-                                android:textColor="#333333"
-                                android:textSize="14sp"
-                                android:background="@drawable/bg_edit_text"
-                                android:padding="8dp"
-                                android:inputType="textEmailAddress"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Correo electrónico:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
-                        </LinearLayout>
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="jose@gmail.com"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="textEmailAddress"
+                        android:layout_marginBottom="16dp"/>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dirección:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_phone"
-                                android:tint="#666666"
-                                android:layout_marginEnd="8dp"/>
-
-                            <EditText
-                                android:id="@+id/etOwnerPhone"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="612-123-4567"
-                                android:textColor="#333333"
-                                android:textSize="14sp"
-                                android:background="@drawable/bg_edit_text"
-                                android:padding="8dp"
-                                android:inputType="phone"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_location"
-                                android:tint="#666666"
-                                android:layout_marginEnd="8dp"/>
-
-                            <EditText
-                                android:id="@+id/etOwnerAddress"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Colonia Púrpura. calle 123"
-                                android:textColor="#333333"
-                                android:textSize="14sp"
-                                android:background="@drawable/bg_edit_text"
-                                android:padding="8dp"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
+                    <EditText
+                        android:id="@+id/etAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Colonia Púrpura #123"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Título Mascotas Asociadas (SOLO VISTA) -->
-            <TextView
+            <!-- Sección Mascotas asociadas -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mascotas asociadas"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="12dp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
 
-            <!-- Tabla Mascotas Asociadas -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mascotas asociadas"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddPet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="+ Agregar"
+                    android:textSize="12sp"
+                    android:backgroundTint="#2E7D32"
+                    app:cornerRadius="16dp"/>
+
+            </LinearLayout>
+
+            <!-- Lista de mascotas asociadas -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -209,64 +233,31 @@
                 app:cardElevation="2dp"
                 android:layout_marginBottom="16dp">
 
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvOwnerPets"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:orientation="horizontal"
-                        android:background="#2E7D32"
-                        android:paddingHorizontal="16dp"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Nombre"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Mascotas"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold"/>
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvPets"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"/>
-
-                </LinearLayout>
+                    android:nestedScrollingEnabled="false"
+                    android:padding="8dp"/>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Título Historial de Citas (SOLO VISTA) -->
+            <!-- Historial de citas (solo vista) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Historial de citas"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#333333"
                 android:layout_marginBottom="12dp"/>
 
-            <!-- Tabla Historial de Citas -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -312,12 +303,17 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1.2"
-                            android:text="Dr. v en turno"
+                            android:text="Dr. en turno"
                             android:textColor="@android:color/white"
                             android:textStyle="bold"
                             android:textSize="12sp"/>
 
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvAppointments"
@@ -329,12 +325,12 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Botones: Guardar Cambios y Cancelar -->
+            <!-- Botones -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="8dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCancel"
