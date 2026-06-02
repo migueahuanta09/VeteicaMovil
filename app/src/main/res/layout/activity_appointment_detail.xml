@@ -97,7 +97,7 @@
                                 android:id="@+id/ivPetPhoto"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
-                                android:src="@drawable/ic_pet"
+                                android:src="@drawable/ic_add_photo"
                                 android:tint="#2E7D32"/>
 
                         </LinearLayout>

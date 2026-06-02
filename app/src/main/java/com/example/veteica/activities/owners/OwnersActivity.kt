@@ -117,6 +117,7 @@ class OwnersActivity : AppCompatActivity() {
         adapter = OwnerAdapter(ownersList) { owner ->
             val intent = Intent(this, OwnerDetailActivity::class.java)
             intent.putExtra("owner_id", owner.id)
+            intent.putExtra("owner_code", owner.uniqueCode)  // 👈 CORREGIDO
             intent.putExtra("owner_name", owner.name)
             startActivity(intent)
         }
@@ -126,12 +127,11 @@ class OwnersActivity : AppCompatActivity() {
 
     private fun setupMockData() {
         originalList.addAll(listOf(
-            Owner(1, "Juan Pérez", "555-1234-567", "juan@email.com", "Av. Principal #123", 2),
-            Owner(2, "María García", "555-2345-678", "maria@email.com", "Calle Reforma #456", 1),
-            Owner(3, "Carlos López", "555-3456-789", "carlos@email.com", "Blvd. Centro #789", 3),
-            Owner(4, "Ana Martínez", "555-4567-890", "ana@email.com", "Privada del Parque #12", 1),
-            Owner(5, "Luis Rodríguez", "555-5678-901", "luis@email.com", "Av. Universidad #234", 2),
-            Owner(6, "Laura Fernández", "555-6789-012", "laura@email.com", "Calle Jardín #567", 1)
+            Owner(1, "12345678", "José Herrera", "612-123-4567", "jose@gmail.com", "Colonia Púrpura #123", 2, null),
+            Owner(2, "87654321", "María García", "612-234-5678", "maria@gmail.com", "Calle Reforma #456", 1, null),
+            Owner(3, "11223344", "Carlos López", "612-345-6789", "carlos@gmail.com", "Blvd. Centro #789", 3, null),
+            Owner(4, "44332211", "Ana Martínez", "612-456-7890", "ana@gmail.com", "Privada del Parque #12", 1, null),
+            Owner(5, "55667788", "Luis Rodríguez", "612-567-8901", "luis@gmail.com", "Av. Universidad #234", 2, null)
         ))
         ownersList.addAll(originalList)
         adapter.updateList(ownersList)
@@ -159,9 +159,10 @@ class OwnersActivity : AppCompatActivity() {
             ownersList.addAll(originalList)
         } else {
             val filtered = originalList.filter {
-                it.name.lowercase().contains(query) ||
-                        it.phone.contains(query) ||
-                        it.email.lowercase().contains(query)
+                it.id.toString().contains(query) ||
+                        it.name.lowercase().contains(query) ||
+                        it.uniqueCode.contains(query) ||
+                        it.phone.contains(query)
             }
             ownersList.clear()
             ownersList.addAll(filtered)

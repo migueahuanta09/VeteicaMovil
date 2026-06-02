@@ -43,17 +43,6 @@
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
-                <TextView
-                    android:id="@+id/btnSaveToolbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Guardar"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>

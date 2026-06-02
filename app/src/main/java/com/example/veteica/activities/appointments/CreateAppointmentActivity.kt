@@ -1,5 +1,6 @@
 package com.example.veteica.activities.appointments
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -10,23 +11,25 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.veteica.R
+import com.example.veteica.models.Pet
+import java.io.File
 
 class CreateAppointmentActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSaveToolbar: TextView
-    private lateinit var btnSave: com.google.android.material.button.MaterialButton
-    private lateinit var btnCancel: com.google.android.material.button.MaterialButton
+    private lateinit var btnCreate: com.google.android.material.button.MaterialButton
     private lateinit var ivPetPhoto: ImageView
-    private lateinit var etPetName: EditText
+    private lateinit var spinnerPet: Spinner
+    private lateinit var tvOwnerName: TextView
     private lateinit var etDate: EditText
     private lateinit var etTime: EditText
-    private lateinit var etOwnerName: EditText
     private lateinit var etVeterinarian: EditText
-    private lateinit var spinnerStatus: Spinner
     private lateinit var etReason: EditText
     private lateinit var etDiagnosis: EditText
-    private lateinit var layoutPhoto: android.widget.LinearLayout
+    private lateinit var spinnerStatus: Spinner
+
+    private val petsList = mutableListOf<Pet>()
+    private var selectedPet: Pet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,25 +37,23 @@ class CreateAppointmentActivity : AppCompatActivity() {
 
         initViews()
         setupToolbar()
-        setupSpinner()
+        setupSpinners()
+        loadMockPets()
         setupClickListeners()
     }
 
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
-        btnSaveToolbar = findViewById(R.id.btnSaveToolbar)
-        btnSave = findViewById(R.id.btnSave)
-        btnCancel = findViewById(R.id.btnCancel)
+        btnCreate = findViewById(R.id.btnCreate)
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
-        etPetName = findViewById(R.id.etPetName)
+        spinnerPet = findViewById(R.id.spinnerPet)
+        tvOwnerName = findViewById(R.id.tvOwnerName)
         etDate = findViewById(R.id.etDate)
         etTime = findViewById(R.id.etTime)
-        etOwnerName = findViewById(R.id.etOwnerName)
         etVeterinarian = findViewById(R.id.etVeterinarian)
-        spinnerStatus = findViewById(R.id.spinnerStatus)
         etReason = findViewById(R.id.etReason)
         etDiagnosis = findViewById(R.id.etDiagnosis)
-        layoutPhoto = findViewById(R.id.layoutPhoto)
+        spinnerStatus = findViewById(R.id.spinnerStatus)
     }
 
     private fun setupToolbar() {
@@ -61,13 +62,74 @@ class CreateAppointmentActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun setupSpinner() {
+    private fun setupSpinners() {
+        // Spinner de estados
         val statusList = arrayOf("Pendiente", "Confirmada", "Revisado", "Completada", "Cancelada")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, statusList)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerStatus.adapter = adapter
-        // Por defecto seleccionar "Pendiente"
-        spinnerStatus.setSelection(0)
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, statusList)
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerStatus.adapter = statusAdapter
+        spinnerStatus.setSelection(0) // Pendiente por defecto
+    }
+
+    private fun loadMockPets() {
+        // Datos mock de mascotas
+        petsList.addAll(listOf(
+            Pet(1, "Lilo", "Perro", "Labrador", 3, 28.5, "Macho", "Dorado", "José Herrera", "", null),
+            Pet(2, "Max", "Perro", "Bulldog", 5, 32.0, "Macho", "Atigrado", "Juan Pérez", "", null),
+            Pet(3, "Luna", "Gato", "Siames", 2, 4.2, "Hembra", "Blanco", "María García", "", null),
+            Pet(4, "Rocky", "Perro", "Pastor Alemán", 4, 35.0, "Macho", "Negro", "Carlos López", "", null),
+            Pet(5, "Bella", "Perro", "Poodle", 1, 6.5, "Hembra", "Blanco", "Ana Martínez", "", null)
+        ))
+
+        // Configurar spinner de mascotas
+        val petNames = petsList.map { "${it.name} (${it.species})" }
+        val petAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, petNames)
+        petAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPet.adapter = petAdapter
+
+        // Seleccionar primera mascota por defecto
+        spinnerPet.setSelection(0)
+        updateSelectedPet(0)
+
+        // Listener para cambio de mascota
+        spinnerPet.setOnItemSelectedListener(object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                updateSelectedPet(position)
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        })
+    }
+
+    private fun updateSelectedPet(position: Int) {
+        if (position < petsList.size) {
+            selectedPet = petsList[position]
+            selectedPet?.let { pet ->
+                tvOwnerName.text = pet.ownerName
+                loadPetPhoto(pet.photoUri)
+            }
+        }
+    }
+
+    private fun loadPetPhoto(photoUri: String?) {
+        if (!photoUri.isNullOrEmpty()) {
+            try {
+                val uri = Uri.parse(photoUri)
+                val file = File(uri.path ?: "")
+                if (file.exists()) {
+                    ivPetPhoto.setImageURI(uri)
+                    ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                    ivPetPhoto.setPadding(0, 0, 0, 0)
+                    ivPetPhoto.setColorFilter(null)
+                    return
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        // Foto por defecto
+        ivPetPhoto.setImageResource(R.drawable.ic_pet)
+        ivPetPhoto.setColorFilter(resources.getColor(R.color.veteica_green))
+        ivPetPhoto.setPadding(20, 20, 20, 20)
     }
 
     private fun setupClickListeners() {
@@ -75,41 +137,33 @@ class CreateAppointmentActivity : AppCompatActivity() {
             finish()
         }
 
-        btnCancel.setOnClickListener {
-            finish()
-        }
-
-        btnSaveToolbar.setOnClickListener {
-            saveAppointment()
-        }
-
-        btnSave.setOnClickListener {
-            saveAppointment()
-        }
-
-        layoutPhoto.setOnClickListener {
-            Toast.makeText(this, "Agregar foto - Próximamente", Toast.LENGTH_SHORT).show()
+        btnCreate.setOnClickListener {
+            createAppointment()
         }
     }
 
-    private fun saveAppointment() {
-        val petName = etPetName.text.toString().trim()
+    private fun createAppointment() {
+        val selectedPosition = spinnerPet.selectedItemPosition
+        val pet = if (selectedPosition < petsList.size) petsList[selectedPosition] else null
+
+        val petName = pet?.name ?: ""
+        val ownerName = tvOwnerName.text.toString()
         val date = etDate.text.toString().trim()
         val time = etTime.text.toString().trim()
-        val ownerName = etOwnerName.text.toString().trim()
         val veterinarian = etVeterinarian.text.toString().trim()
-        val status = spinnerStatus.selectedItem.toString()
         val reason = etReason.text.toString().trim()
         val diagnosis = etDiagnosis.text.toString().trim()
+        val status = spinnerStatus.selectedItem.toString()
 
         when {
-            petName.isEmpty() -> Toast.makeText(this, "Ingresa el nombre de la mascota", Toast.LENGTH_SHORT).show()
+            pet == null -> Toast.makeText(this, "Selecciona una mascota", Toast.LENGTH_SHORT).show()
             date.isEmpty() -> Toast.makeText(this, "Ingresa la fecha", Toast.LENGTH_SHORT).show()
             time.isEmpty() -> Toast.makeText(this, "Ingresa la hora", Toast.LENGTH_SHORT).show()
-            ownerName.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
             veterinarian.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del veterinario", Toast.LENGTH_SHORT).show()
+            reason.isEmpty() -> Toast.makeText(this, "Ingresa el motivo", Toast.LENGTH_SHORT).show()
             else -> {
-                Toast.makeText(this, "Cita creada correctamente\n$petName - $date $time\nEstado: $status", Toast.LENGTH_LONG).show()
+                val message = "Cita creada correctamente\n$petName - $date $time\nEstado: $status"
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 finish()
             }
         }

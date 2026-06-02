@@ -12,7 +12,6 @@ import com.example.veteica.R
 class CreatePaymentActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSaveToolbar: TextView
     private lateinit var btnSave: Button
     private lateinit var btnCancel: Button
     private lateinit var etProductName: EditText
@@ -35,7 +34,6 @@ class CreatePaymentActivity : AppCompatActivity() {
 
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
-        btnSaveToolbar = findViewById(R.id.btnSaveToolbar)
         btnSave = findViewById(R.id.btnSave)
         btnCancel = findViewById(R.id.btnCancel)
         etProductName = findViewById(R.id.etProductName)
@@ -63,9 +61,7 @@ class CreatePaymentActivity : AppCompatActivity() {
             finish()
         }
 
-        btnSaveToolbar.setOnClickListener {
-            saveProduct()
-        }
+
 
         btnSave.setOnClickListener {
             saveProduct()

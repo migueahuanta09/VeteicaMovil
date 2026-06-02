@@ -11,7 +11,6 @@ import android.provider.MediaStore
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -21,7 +20,6 @@ import com.example.veteica.R
 class CreateOwnerActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSaveToolbar: TextView
     private lateinit var btnCreate: com.google.android.material.button.MaterialButton
     private lateinit var layoutPhoto: android.widget.LinearLayout
     private lateinit var ivOwnerPhoto: ImageView
@@ -46,7 +44,6 @@ class CreateOwnerActivity : AppCompatActivity() {
 
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
-        btnSaveToolbar = findViewById(R.id.btnSaveToolbar)
         btnCreate = findViewById(R.id.btnCreate)
         layoutPhoto = findViewById(R.id.layoutPhoto)
         ivOwnerPhoto = findViewById(R.id.ivOwnerPhoto)
@@ -69,10 +66,6 @@ class CreateOwnerActivity : AppCompatActivity() {
 
         layoutPhoto.setOnClickListener {
             showImagePickerDialog()
-        }
-
-        btnSaveToolbar.setOnClickListener {
-            saveOwner()
         }
 
         btnCreate.setOnClickListener {

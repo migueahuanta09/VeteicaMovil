@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Barra azul -->
+        <!-- Barra azul (sin botón Guardar) -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -43,16 +43,6 @@
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
-                <TextView
-                    android:id="@+id/btnSaveToolbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Guardar"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
 
             </LinearLayout>
 
@@ -64,12 +54,38 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Card principal con foto e info -->
+            <!-- Foto de la mascota seleccionada -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="4dp">
+
+                    <ImageView
+                        android:id="@+id/ivPetPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_add_photo"
+                        android:scaleType="centerCrop"
+                        android:padding="20dp"
+                        android:tint="#2E7D32"/>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="3dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
@@ -78,272 +94,141 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Fila con foto y nombre -->
-                    <LinearLayout
+                    <!-- Seleccionar mascota -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seleccionar mascota:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerPet"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="8dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Dueño (auto-completado, solo lectura) -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dueño:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tvOwnerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="Seleccione una mascota"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:gravity="center_vertical"
+                        android:padding="8dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Fecha -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="16dp">
+                        android:hint="DD/MM/AAAA"
+                        android:text="20/10/2025"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="date"
+                        android:layout_marginBottom="16dp"/>
 
-                        <!-- Foto de la mascota -->
-                        <LinearLayout
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:gravity="center"
-                            android:background="@drawable/bg_circle_green"
-                            android:layout_marginEnd="16dp"
-                            android:clickable="true"
-                            android:foreground="?attr/selectableItemBackground"
-                            android:id="@+id/layoutPhoto">
+                    <!-- Hora -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hora:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
-                            <ImageView
-                                android:id="@+id/ivPetPhoto"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:src="@drawable/ic_add_photo"
-                                android:tint="#2E7D32"/>
-
-                        </LinearLayout>
-
-                        <!-- Nombre de la mascota -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Nombre de la mascota:"
-                                android:textSize="12sp"
-                                android:textColor="#999999"/>
-
-                            <EditText
-                                android:id="@+id/etPetName"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Ej: Lilo"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="#333333"
-                                android:background="@drawable/bg_edit_text"
-                                android:padding="8dp"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginVertical="12dp"/>
-
-                    <!-- Fecha y Hora -->
-                    <LinearLayout
+                    <EditText
+                        android:id="@+id/etTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Fecha:"
-                                android:textSize="12sp"
-                                android:textColor="#999999"/>
-
-                            <EditText
-                                android:id="@+id/etDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="DD/MM/AAAA"
-                                android:textSize="14sp"
-                                android:textColor="#333333"
-                                android:background="@drawable/bg_edit_text"
-                                android:padding="8dp"
-                                android:inputType="date"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Hora:"
-                                android:textSize="12sp"
-                                android:textColor="#999999"/>
-
-                            <EditText
-                                android:id="@+id/etTime"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="HH:MM AM/PM"
-                                android:textSize="14sp"
-                                android:textColor="#333333"
-                                android:background="@drawable/bg_edit_text"
-                                android:padding="8dp"
-                                android:inputType="time"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- Dueño -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Dueño:"
-                            android:textSize="12sp"
-                            android:textColor="#999999"/>
-
-                        <EditText
-                            android:id="@+id/etOwnerName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Nombre del dueño"
-                            android:textSize="14sp"
-                            android:textColor="#333333"
-                            android:background="@drawable/bg_edit_text"
-                            android:padding="8dp"/>
-
-                    </LinearLayout>
+                        android:hint="HH:MM AM/PM"
+                        android:text="10:00 AM"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:inputType="time"
+                        android:layout_marginBottom="16dp"/>
 
                     <!-- Veterinario -->
-                    <LinearLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Veterinario:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <EditText
+                        android:id="@+id/etVeterinarian"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="12dp">
+                        android:hint="Nombre del veterinario"
+                        android:text="Dra. María González"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Veterinario:"
-                            android:textSize="12sp"
-                            android:textColor="#999999"/>
-
-                        <EditText
-                            android:id="@+id/etVeterinarian"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Nombre del veterinario"
-                            android:textSize="14sp"
-                            android:textColor="#333333"
-                            android:background="@drawable/bg_edit_text"
-                            android:padding="8dp"/>
-
-                    </LinearLayout>
-
-                    <!-- Estado -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Estado:"
-                            android:textSize="12sp"
-                            android:textColor="#999999"/>
-
-                        <Spinner
-                            android:id="@+id/spinnerStatus"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_edit_text"
-                            android:padding="8dp"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Card Motivo -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
+                    <!-- Motivo -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Motivo:"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
-                        android:layout_marginBottom="8dp"/>
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
                     <EditText
                         android:id="@+id/etReason"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Motivo de la consulta"
+                        android:text="Consulta general"
                         android:textSize="14sp"
-                        android:textColor="#666666"
+                        android:textColor="#333333"
                         android:background="@drawable/bg_edit_text"
                         android:padding="12dp"
                         android:minHeight="80dp"
                         android:gravity="top"
-                        android:inputType="textMultiLine"/>
+                        android:inputType="textMultiLine"
+                        android:layout_marginBottom="16dp"/>
 
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Card Diagnóstico -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                android:layout_marginBottom="24dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
+                    <!-- Diagnóstico (opcional) -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Diagnóstico:"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
-                        android:layout_marginBottom="8dp"/>
+                        android:text="Diagnóstico (opcional):"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
 
                     <EditText
                         android:id="@+id/etDiagnosis"
@@ -351,53 +236,46 @@
                         android:layout_height="wrap_content"
                         android:hint="Diagnóstico"
                         android:textSize="14sp"
-                        android:textColor="#666666"
+                        android:textColor="#333333"
                         android:background="@drawable/bg_edit_text"
                         android:padding="12dp"
                         android:minHeight="80dp"
                         android:gravity="top"
-                        android:inputType="textMultiLine"/>
+                        android:inputType="textMultiLine"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Estado -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estado:"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginBottom="4dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_edit_text"
+                        android:padding="8dp"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Botones: Cancelar y Guardar -->
-            <LinearLayout
+            <!-- Botón Crear Cita (único) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCancel"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:text="Cancelar"
-                    android:textColor="#FF5722"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="12dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:strokeColor="#FF5722"
-                    app:strokeWidth="1.5dp"
-                    android:layout_marginEnd="8dp"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSave"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:text="Crear Cita"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="12dp"
-                    android:backgroundTint="#2E7D32"
-                    android:layout_marginStart="8dp"/>
-
-            </LinearLayout>
+                android:layout_height="52dp"
+                android:text="Crear Cita"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                android:backgroundTint="#2E7D32"
+                android:layout_marginBottom="12dp"/>
 
         </LinearLayout>
 

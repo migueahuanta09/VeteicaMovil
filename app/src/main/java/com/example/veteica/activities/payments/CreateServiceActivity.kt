@@ -14,7 +14,6 @@ import com.example.veteica.R
 class CreateServiceActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSaveToolbar: TextView
     private lateinit var btnSave: Button
     private lateinit var btnCancel: Button
     private lateinit var etServiceName: EditText
@@ -36,7 +35,6 @@ class CreateServiceActivity : AppCompatActivity() {
 
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
-        btnSaveToolbar = findViewById(R.id.btnSaveToolbar)
         btnSave = findViewById(R.id.btnSave)
         btnCancel = findViewById(R.id.btnCancel)
         etServiceName = findViewById(R.id.etServiceName)
@@ -69,9 +67,7 @@ class CreateServiceActivity : AppCompatActivity() {
             finish()
         }
 
-        btnSaveToolbar.setOnClickListener {
-            saveService()
-        }
+
 
         btnSave.setOnClickListener {
             saveService()

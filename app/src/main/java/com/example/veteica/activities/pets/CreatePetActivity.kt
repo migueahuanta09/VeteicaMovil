@@ -18,18 +18,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.example.veteica.R
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class CreatePetActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSaveToolbar: TextView
     private lateinit var btnCreate: com.google.android.material.button.MaterialButton
     private lateinit var layoutPhoto: android.widget.LinearLayout
     private lateinit var ivPetPhoto: ImageView
@@ -43,7 +36,6 @@ class CreatePetActivity : AppCompatActivity() {
     private lateinit var etOwnerName: EditText
     private lateinit var etNotes: EditText
 
-    // Variables para la foto
     private var currentPhotoUri: Uri? = null
     private val REQUEST_CODE_CAMERA = 100
     private val REQUEST_CODE_GALLERY = 101
@@ -61,7 +53,6 @@ class CreatePetActivity : AppCompatActivity() {
 
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
-        btnSaveToolbar = findViewById(R.id.btnSaveToolbar)
         btnCreate = findViewById(R.id.btnCreate)
         layoutPhoto = findViewById(R.id.layoutPhoto)
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
@@ -103,10 +94,6 @@ class CreatePetActivity : AppCompatActivity() {
             showImagePickerDialog()
         }
 
-        btnSaveToolbar.setOnClickListener {
-            savePet()
-        }
-
         btnCreate.setOnClickListener {
             savePet()
         }
@@ -126,15 +113,7 @@ class CreatePetActivity : AppCompatActivity() {
     }
 
     private fun checkPermissionsAndOpenCamera() {
-        val permissions = arrayOf(
-            android.Manifest.permission.CAMERA
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13+ no necesita permisos de almacenamiento para la cámara
-        } else {
-            permissions + android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-        }
+        val permissions = arrayOf(android.Manifest.permission.CAMERA)
 
         val hasPermissions = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
@@ -203,6 +182,7 @@ class CreatePetActivity : AppCompatActivity() {
                         ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
                         ivPetPhoto.setPadding(0, 0, 0, 0)
                         ivPetPhoto.setColorFilter(null)
+                        ivPetPhoto.setBackgroundColor(0)
                     }
                 }
                 REQUEST_CODE_GALLERY -> {
@@ -213,6 +193,7 @@ class CreatePetActivity : AppCompatActivity() {
                         ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
                         ivPetPhoto.setPadding(0, 0, 0, 0)
                         ivPetPhoto.setColorFilter(null)
+                        ivPetPhoto.setBackgroundColor(0)
                     }
                 }
             }
@@ -229,7 +210,6 @@ class CreatePetActivity : AppCompatActivity() {
         val color = etColor.text.toString().trim()
         val ownerName = etOwnerName.text.toString().trim()
         val notes = etNotes.text.toString().trim()
-        val photoUri = currentPhotoUri?.toString() ?: ""
 
         when {
             name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre de la mascota", Toast.LENGTH_SHORT).show()
