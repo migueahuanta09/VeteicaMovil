@@ -9,15 +9,12 @@ const generarToken = (id) => {
 const register = async (req, res) => {
   try {
     const { nombre, apellido, cedula, email, password, telefono } = req.body;
-
     const yaExiste = await User.findOne({ email });
     if (yaExiste) {
       return res.status(400).json({ success: false, error: { code: 'AUTH_001', message: 'El email ya está registrado' } });
     }
-
     const user = new User({ nombre, apellido, cedula, email, password, telefono });
     await user.save();
-
     const token = generarToken(user._id);
     res.status(201).json({
       success: true,
@@ -33,17 +30,17 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password, cedula } = req.body;
-
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ success: false, error: { code: 'AUTH_002', message: 'Usuario no encontrado' } });
     }
-
     const passwordCorrecta = await user.compararPassword(password);
     if (!passwordCorrecta) {
       return res.status(401).json({ success: false, error: { code: 'AUTH_001', message: 'Credenciales incorrectas' } });
     }
-
+    if (cedula && user.cedula !== cedula) {
+      return res.status(401).json({ success: false, error: { code: 'AUTH_004', message: 'Cédula incorrecta' } });
+    }
     const token = generarToken(user._id);
     res.json({
       success: true,
@@ -67,7 +64,6 @@ const login = async (req, res) => {
 
 // POST /api/auth/logout
 const logout = async (req, res) => {
-  // El logout en JWT se maneja en el cliente borrando el token
   res.json({ success: true, message: 'Sesión cerrada' });
 };
 
