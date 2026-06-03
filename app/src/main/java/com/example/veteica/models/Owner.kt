@@ -2,6 +2,7 @@ package com.example.veteica.models
 
 data class Owner(
     val id: Int = 0,
+    val mongoId: String = "",
     val uniqueCode: String = "",
     val name: String = "",
     val phone: String = "",

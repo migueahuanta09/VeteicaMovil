@@ -1,6 +1,7 @@
 package com.example.veteica.activities.appointments
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -23,6 +25,8 @@ import com.example.veteica.activities.profile.ProfileActivity
 import com.example.veteica.activities.owners.OwnersActivity
 import com.example.veteica.adapters.AppointmentAdapter
 import com.example.veteica.models.Appointment
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class AppointmentsActivity : AppCompatActivity() {
 
@@ -34,6 +38,7 @@ class AppointmentsActivity : AppCompatActivity() {
     private lateinit var btnSearch: ImageView
     private lateinit var btnCreateAppointment: MaterialButton
     private lateinit var adapter: AppointmentAdapter
+    private lateinit var prefs: SharedPreferences
     private val appointmentsList = mutableListOf<Appointment>()
     private val originalList = mutableListOf<Appointment>()
 
@@ -41,11 +46,13 @@ class AppointmentsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_appointments)
 
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+
         initViews()
         setupToolbar()
         setupDrawerLayout()
         setupRecyclerView()
-        setupMockData()
+        loadAppointments()
         setupClickListeners()
     }
 
@@ -72,38 +79,13 @@ class AppointmentsActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
-                }
-                R.id.nav_pets -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    startActivity(Intent(this, PetsActivity::class.java))
-                    finish()
-                }
-                R.id.nav_owners -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    startActivity(Intent(this, OwnersActivity::class.java))
-                    finish()
-                }
-                R.id.nav_appointments -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                R.id.nav_payments -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    startActivity(Intent(this, PaymentsActivity::class.java))
-                    finish()
-                }
-                R.id.nav_profile -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    finish()
-                }
-                R.id.nav_logout -> {
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finishAffinity()
-                }
+                R.id.nav_home -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, HomeActivity::class.java)); finish() }
+                R.id.nav_pets -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PetsActivity::class.java)); finish() }
+                R.id.nav_owners -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, OwnersActivity::class.java)); finish() }
+                R.id.nav_appointments -> { drawerLayout.closeDrawer(GravityCompat.START) }
+                R.id.nav_payments -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PaymentsActivity::class.java)); finish() }
+                R.id.nav_profile -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, ProfileActivity::class.java)); finish() }
+                R.id.nav_logout -> { prefs.edit().remove("token").apply(); startActivity(Intent(this, LoginActivity::class.java)); finishAffinity() }
             }
             true
         }
@@ -124,16 +106,48 @@ class AppointmentsActivity : AppCompatActivity() {
         rvAppointments.adapter = adapter
     }
 
-    private fun setupMockData() {
-        originalList.addAll(listOf(
-            Appointment(1, "01/06/2026", "10:00 AM", "Lilo", "Jose Herrera", "Navarro admin", "Consulta general", "Pendiente"),
-            Appointment(2, "26/11/2025", "10:00 AM", "Lilo", "Jose Herrera", "Navarro admin", "Revisión", "Confirmada"),
-            Appointment(3, "25/11/2025", "10:00 AM", "Lilo", "Jose Herrera", "Navarro admin", "Vacunación", "Completada"),
-            Appointment(4, "20/11/2025", "03:00 PM", "Max", "Juan Pérez", "Dra. María", "Consulta general", "Pendiente"),
-            Appointment(5, "15/11/2025", "11:30 AM", "Luna", "María García", "Dr. Carlos", "Revisión", "Confirmada")
-        ))
-        appointmentsList.addAll(originalList)
-        adapter.updateList(appointmentsList)
+    private fun loadAppointments() {
+        val token = prefs.getString("token", "") ?: ""
+        if (token.isEmpty()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.getAppointments()
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val data = body?.get("data") as? Map<*, *>
+                    val items = data?.get("items") as? List<*>
+
+                    originalList.clear()
+                    items?.forEach { item ->
+                        val map = item as? Map<*, *> ?: return@forEach
+                        originalList.add(Appointment(
+                            id = (map["_id"] as? String)?.hashCode() ?: 0,
+                            date = map["fecha"] as? String ?: "",
+                            time = map["hora"] as? String ?: "",
+                            petName = map["nombreMascota"] as? String ?: "",
+                            ownerName = map["nombreDueno"] as? String ?: "",
+                            veterinarian = map["veterinario"] as? String ?: "",
+                            reason = map["motivo"] as? String ?: "",
+                            status = map["estado"] as? String ?: "Pendiente"
+                        ))
+                    }
+                    appointmentsList.clear()
+                    appointmentsList.addAll(originalList)
+                    adapter.updateList(appointmentsList)
+                } else {
+                    Toast.makeText(this@AppointmentsActivity, "Error al cargar citas", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@AppointmentsActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupClickListeners() {
@@ -141,9 +155,7 @@ class AppointmentsActivity : AppCompatActivity() {
             startActivity(Intent(this, CreateAppointmentActivity::class.java))
         }
 
-        btnSearch.setOnClickListener {
-            performSearch()
-        }
+        btnSearch.setOnClickListener { performSearch() }
 
         etSearch.setOnEditorActionListener { _, _, _ ->
             performSearch()
@@ -158,8 +170,7 @@ class AppointmentsActivity : AppCompatActivity() {
             appointmentsList.addAll(originalList)
         } else {
             val filtered = originalList.filter {
-                it.id.toString().contains(query) ||
-                        it.petName.lowercase().contains(query) ||
+                it.petName.lowercase().contains(query) ||
                         it.ownerName.lowercase().contains(query)
             }
             appointmentsList.clear()

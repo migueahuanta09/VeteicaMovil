@@ -2,6 +2,7 @@ package com.example.veteica.models
 
 data class Pet(
     val id: Int = 0,
+    val mongoId: String = "",
     val name: String = "",
     val species: String = "",
     val breed: String = "",

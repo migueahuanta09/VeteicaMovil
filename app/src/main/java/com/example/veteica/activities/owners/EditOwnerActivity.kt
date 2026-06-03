@@ -17,14 +17,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veteica.R
 import com.example.veteica.adapters.OwnerAppointmentAdapter
-import com.example.veteica.adapters.SelectablePetAdapter
 import com.example.veteica.adapters.OwnerEditPetAdapter
+import com.example.veteica.adapters.SelectablePetAdapter
 import com.example.veteica.models.OwnerAppointment
 import com.example.veteica.models.Pet
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class EditOwnerActivity : AppCompatActivity() {
 
@@ -46,6 +49,7 @@ class EditOwnerActivity : AppCompatActivity() {
     private val associatedPets = mutableListOf<Pet>()
     private val allPets = mutableListOf<Pet>()
     private var currentPhotoUri: Uri? = null
+    private var ownerId: String = ""
 
     private val REQUEST_CODE_CAMERA = 100
     private val REQUEST_CODE_GALLERY = 101
@@ -58,7 +62,7 @@ class EditOwnerActivity : AppCompatActivity() {
         initViews()
         setupToolbar()
         setupRecyclerViews()
-        loadMockData()
+        loadOwnerData()
         setupClickListeners()
     }
 
@@ -85,7 +89,6 @@ class EditOwnerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews() {
-        // Adaptador para mascotas asociadas
         petAdapter = OwnerEditPetAdapter(associatedPets) { pet, position ->
             associatedPets.removeAt(position)
             petAdapter.updateList(associatedPets)
@@ -95,53 +98,75 @@ class EditOwnerActivity : AppCompatActivity() {
         rvOwnerPets.adapter = petAdapter
     }
 
-    private fun loadMockData() {
-        // Datos del dueño
-        etName.setText("José Herrera")
-        etPhone.setText("612-123-4567")
-        etEmail.setText("jose@gmail.com")
-        etAddress.setText("Colonia Púrpura #123")
+    private fun loadOwnerData() {
+        ownerId = intent.getStringExtra("owner_mongo_id") ?: ""
+        val ownerName = intent.getStringExtra("owner_name") ?: ""
 
-        // Mascotas ya asociadas
-        associatedPets.addAll(listOf(
-            Pet(1, "Lilo", "Perro", "Labrador", 3, 28.5, "Macho", "Dorado", "José Herrera", ""),
-            Pet(2, "Max", "Perro", "Bulldog", 5, 32.0, "Macho", "Atigrado", "José Herrera", ""),
-            Pet(3, "Luna", "Gato", "Siames", 2, 4.2, "Hembra", "Blanco", "José Herrera", "")
-        ))
-        petAdapter.updateList(associatedPets)
+        etName.setText(ownerName)
+        etPhone.setText(intent.getStringExtra("owner_phone") ?: "")
+        etEmail.setText(intent.getStringExtra("owner_email") ?: "")
+        etAddress.setText(intent.getStringExtra("owner_address") ?: "")
 
-        // Todas las mascotas disponibles (para seleccionar)
-        allPets.addAll(listOf(
-            Pet(1, "Lilo", "Perro", "Labrador", 3, 28.5, "Macho", "Dorado", "José Herrera", ""),
-            Pet(2, "Max", "Perro", "Bulldog", 5, 32.0, "Macho", "Atigrado", "José Herrera", ""),
-            Pet(3, "Luna", "Gato", "Siames", 2, 4.2, "Hembra", "Blanco", "José Herrera", ""),
-            Pet(4, "Rocky", "Perro", "Pastor Alemán", 4, 35.0, "Macho", "Negro", "Otro Dueño", ""),
-            Pet(5, "Bella", "Perro", "Poodle", 1, 6.5, "Hembra", "Blanco", "Otro Dueño", "")
-        ))
-
-        // Historial de citas
+        // Historial de citas mock por ahora
         val appointmentsList = listOf(
             OwnerAppointment(1, "Consulta general", "22/10/2025", "Ligero problema en el oído.", "Navarro admin"),
             OwnerAppointment(2, "Revisión", "23/10/2025", "Aun con ligero problema en el oído.", "Navarro admin"),
             OwnerAppointment(3, "Tratamiento", "24/10/2025", "Infección de oído", "Navarro admin")
         )
-
         rvAppointments.layoutManager = LinearLayoutManager(this)
         rvAppointments.adapter = OwnerAppointmentAdapter(appointmentsList) { appointment ->
             Toast.makeText(this, "Cita: ${appointment.consulta}", Toast.LENGTH_SHORT).show()
+        }
+
+        loadPetsFromBackend()
+    }
+
+    private fun loadPetsFromBackend() {
+        val token = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+            .getString("token", "") ?: ""
+
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.getPets()
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val data = body?.get("data") as? Map<*, *>
+                    val items = data?.get("items") as? List<*>
+
+                    allPets.clear()
+                    items?.forEachIndexed { index, item ->
+                        val pet = item as? Map<*, *> ?: return@forEachIndexed
+                        allPets.add(Pet(
+                            id = index + 1,
+                            mongoId = pet["_id"] as? String ?: "",
+                            name = pet["nombre"] as? String ?: "",
+                            species = pet["especie"] as? String ?: "",
+                            breed = pet["raza"] as? String ?: "",
+                            age = (pet["edad"] as? Double)?.toInt() ?: 0,
+                            weight = pet["peso"] as? Double ?: 0.0,
+                            gender = pet["genero"] as? String ?: "",
+                            color = pet["color"] as? String ?: "",
+                            ownerName = pet["nombreDueno"] as? String ?: "",
+                            notes = pet["notas"] as? String ?: ""
+                        ))
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@EditOwnerActivity, "Error cargando mascotas", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun showSelectPetDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_select_pet)
-        dialog.setTitle("Seleccionar mascota")
 
         val rvSelectablePets = dialog.findViewById<RecyclerView>(R.id.rvSelectablePets)
 
-        // Filtrar mascotas que no están ya asociadas
         val availablePets = allPets.filter { pet ->
-            associatedPets.none { it.id == pet.id }
+            associatedPets.none { it.mongoId == pet.mongoId }
         }
 
         val selectableAdapter = SelectablePetAdapter(availablePets) { selectedPet ->
@@ -153,22 +178,14 @@ class EditOwnerActivity : AppCompatActivity() {
 
         rvSelectablePets.layoutManager = LinearLayoutManager(this)
         rvSelectablePets.adapter = selectableAdapter
-
         dialog.show()
     }
 
     private fun setupClickListeners() {
         btnBack.setOnClickListener { finish() }
         btnCancel.setOnClickListener { finish() }
-
-        btnAddPet.setOnClickListener {
-            showSelectPetDialog()
-        }
-
-        layoutPhoto.setOnClickListener {
-            showImagePickerDialog()
-        }
-
+        btnAddPet.setOnClickListener { showSelectPetDialog() }
+        layoutPhoto.setOnClickListener { showImagePickerDialog() }
         btnSaveToolbar.setOnClickListener { saveOwner() }
         btnSave.setOnClickListener { saveOwner() }
     }
@@ -182,8 +199,7 @@ class EditOwnerActivity : AppCompatActivity() {
                     0 -> checkPermissionsAndOpenCamera()
                     1 -> openGallery()
                 }
-            }
-            .show()
+            }.show()
     }
 
     private fun checkPermissionsAndOpenCamera() {
@@ -198,8 +214,7 @@ class EditOwnerActivity : AppCompatActivity() {
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
-            val photoUri = createImageUri()
-            photoUri?.let {
+            createImageUri()?.let {
                 currentPhotoUri = it
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, it)
                 startActivityForResult(intent, REQUEST_CODE_CAMERA)
@@ -225,16 +240,12 @@ class EditOwnerActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
             openCamera()
         } else {
-            Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Se necesitan permisos para la cámara", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -242,23 +253,18 @@ class EditOwnerActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                REQUEST_CODE_CAMERA -> {
-                    currentPhotoUri?.let { uri ->
-                        ivOwnerPhoto.setImageURI(uri)
-                        ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivOwnerPhoto.setPadding(0, 0, 0, 0)
-                        ivOwnerPhoto.setColorFilter(null)
-                    }
+                REQUEST_CODE_CAMERA -> currentPhotoUri?.let {
+                    ivOwnerPhoto.setImageURI(it)
+                    ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                    ivOwnerPhoto.setPadding(0, 0, 0, 0)
+                    ivOwnerPhoto.setColorFilter(null)
                 }
-                REQUEST_CODE_GALLERY -> {
-                    val uri = data?.data
-                    uri?.let {
-                        currentPhotoUri = it
-                        ivOwnerPhoto.setImageURI(it)
-                        ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivOwnerPhoto.setPadding(0, 0, 0, 0)
-                        ivOwnerPhoto.setColorFilter(null)
-                    }
+                REQUEST_CODE_GALLERY -> data?.data?.let {
+                    currentPhotoUri = it
+                    ivOwnerPhoto.setImageURI(it)
+                    ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                    ivOwnerPhoto.setPadding(0, 0, 0, 0)
+                    ivOwnerPhoto.setColorFilter(null)
                 }
             }
         }
@@ -271,14 +277,45 @@ class EditOwnerActivity : AppCompatActivity() {
         val address = etAddress.text.toString().trim()
 
         when {
-            name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
-            phone.isEmpty() -> Toast.makeText(this, "Ingresa el teléfono", Toast.LENGTH_SHORT).show()
-            email.isEmpty() -> Toast.makeText(this, "Ingresa el correo electrónico", Toast.LENGTH_SHORT).show()
-            address.isEmpty() -> Toast.makeText(this, "Ingresa la dirección", Toast.LENGTH_SHORT).show()
-            else -> {
-                val message = "Dueño $name actualizado con ${associatedPets.size} mascota(s)"
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                finish()
+            name.isEmpty() -> { Toast.makeText(this, "Ingresa el nombre", Toast.LENGTH_SHORT).show(); return }
+            phone.isEmpty() -> { Toast.makeText(this, "Ingresa el teléfono", Toast.LENGTH_SHORT).show(); return }
+            email.isEmpty() -> { Toast.makeText(this, "Ingresa el correo", Toast.LENGTH_SHORT).show(); return }
+            address.isEmpty() -> { Toast.makeText(this, "Ingresa la dirección", Toast.LENGTH_SHORT).show(); return }
+        }
+
+        if (ownerId.isEmpty()) {
+            Toast.makeText(this, "Error: no se encontró el ID del dueño", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val token = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+            .getString("token", "") ?: ""
+
+        btnSave.isEnabled = false
+        btnSave.text = "Guardando..."
+
+        lifecycleScope.launch {
+            try {
+                val body = mapOf(
+                    "nombre" to name,
+                    "telefono" to phone,
+                    "email" to email,
+                    "direccion" to address
+                )
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.updateOwner(ownerId, body)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(this@EditOwnerActivity, "Dueño actualizado correctamente", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@EditOwnerActivity, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@EditOwnerActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                btnSave.isEnabled = true
+                btnSave.text = "GUARDAR"
             }
         }
     }

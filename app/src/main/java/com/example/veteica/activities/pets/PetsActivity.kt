@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -23,6 +24,8 @@ import com.example.veteica.activities.profile.ProfileActivity
 import com.example.veteica.activities.panel.HomeActivity
 import com.example.veteica.adapters.PetAdapter
 import com.example.veteica.models.Pet
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class PetsActivity : AppCompatActivity() {
 
@@ -45,12 +48,11 @@ class PetsActivity : AppCompatActivity() {
         setupToolbar()
         setupDrawerLayout()
         setupRecyclerView()
-        setupMockData()
         setupClickListeners()
+        loadPets()
     }
 
     private fun initViews() {
-        // Verifica que todos los IDs existen en activity_pets.xml
         drawerLayout = findViewById(R.id.drawerLayout)
         navView = findViewById(R.id.navView)
         btnMenu = findViewById(R.id.btnMenu)
@@ -78,9 +80,7 @@ class PetsActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     finish()
                 }
-                R.id.nav_pets -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
+                R.id.nav_pets -> drawerLayout.closeDrawer(GravityCompat.START)
                 R.id.nav_owners -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     startActivity(Intent(this, OwnersActivity::class.java))
@@ -119,23 +119,68 @@ class PetsActivity : AppCompatActivity() {
             val intent = Intent(this, PetDetailActivity::class.java)
             intent.putExtra("pet_id", pet.id)
             intent.putExtra("pet_name", pet.name)
+            intent.putExtra("pet_mongo_id", pet.mongoId)
             startActivity(intent)
         }
         rvPets.layoutManager = LinearLayoutManager(this)
         rvPets.adapter = adapter
     }
 
-    private fun setupMockData() {
-        originalList.addAll(listOf(
-            Pet(1, "Max", "Perro", "Labrador", 3, 28.5, "Macho", "Dorado", "Juan Pérez", "Paciente activo"),
-            Pet(2, "Luna", "Gato", "Siames", 2, 4.2, "Hembra", "Blanco", "María García", "Alérgica a pollo"),
-            Pet(3, "Rocky", "Perro", "Bulldog", 5, 32.0, "Macho", "Atigrado", "Carlos López", "Requiere medicación"),
-            Pet(4, "Bella", "Perro", "Poodle", 1, 6.5, "Hembra", "Blanco", "Ana Martínez", "Primera vacuna"),
-            Pet(5, "Simba", "Gato", "Persa", 4, 5.8, "Macho", "Naranja", "Luis Rodríguez", "Esterilizado"),
-            Pet(6, "Coco", "Perro", "Chihuahua", 2, 3.2, "Macho", "Café", "Laura Fernández", "Vacunas al día")
-        ))
-        petsList.addAll(originalList)
-        adapter.updateList(petsList)
+    private fun loadPets() {
+        val token = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+            .getString("token", "") ?: ""
+
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.getPets()
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val data = body?.get("data") as? Map<*, *>
+                    val items = data?.get("items") as? List<*>
+
+                    originalList.clear()
+                    petsList.clear()
+
+                    items?.forEachIndexed { index, item ->
+                        val pet = item as? Map<*, *> ?: return@forEachIndexed
+                        val mongoId = pet["_id"] as? String ?: ""
+                        val nombre = pet["nombre"] as? String ?: ""
+                        val especie = pet["especie"] as? String ?: ""
+                        val raza = pet["raza"] as? String ?: ""
+                        val edad = (pet["edad"] as? Double)?.toInt() ?: 0
+                        val peso = pet["peso"] as? Double ?: 0.0
+                        val genero = pet["genero"] as? String ?: ""
+                        val color = pet["color"] as? String ?: ""
+                        val dueno = pet["nombreDueno"] as? String ?: ""
+                        val notas = pet["notas"] as? String ?: ""
+
+                        originalList.add(Pet(
+                            id = index + 1,
+                            mongoId = mongoId,
+                            name = nombre,
+                            species = especie,
+                            breed = raza,
+                            age = edad,
+                            weight = peso,
+                            gender = genero,
+                            color = color,
+                            ownerName = dueno,
+                            notes = notas
+                        ))
+                    }
+
+                    petsList.addAll(originalList)
+                    adapter.updateList(petsList)
+
+                } else {
+                    Toast.makeText(this@PetsActivity, "Error cargando mascotas", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@PetsActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setupClickListeners() {
@@ -143,9 +188,7 @@ class PetsActivity : AppCompatActivity() {
             startActivity(Intent(this, CreatePetActivity::class.java))
         }
 
-        btnSearch.setOnClickListener {
-            performSearch()
-        }
+        btnSearch.setOnClickListener { performSearch() }
 
         etSearch.setOnEditorActionListener { _, _, _ ->
             performSearch()
@@ -168,6 +211,11 @@ class PetsActivity : AppCompatActivity() {
             petsList.addAll(filtered)
         }
         adapter.updateList(petsList)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadPets()
     }
 
     override fun onBackPressed() {

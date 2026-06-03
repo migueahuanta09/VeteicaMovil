@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- PERMISOS PARA CÁMARA Y ALMACENAMIENTO -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +13,6 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.VeteicaApp">
 
-        <!-- ==================== AUTH ==================== -->
         <activity
             android:name=".activities.auth.LoginActivity"
             android:exported="true">
@@ -23,28 +23,23 @@
         </activity>
         <activity android:name=".activities.auth.RegisterActivity" />
 
-        <!-- ==================== PANEL ==================== -->
         <activity android:name=".activities.panel.HomeActivity" />
 
-        <!-- ==================== PETS (MASCOTAS) ==================== -->
         <activity android:name=".activities.pets.PetsActivity" />
         <activity android:name=".activities.pets.PetDetailActivity" />
         <activity android:name=".activities.pets.EditPetActivity" />
         <activity android:name=".activities.pets.CreatePetActivity" />
 
-        <!-- ==================== OWNERS (DUEÑOS) ==================== -->
         <activity android:name=".activities.owners.OwnersActivity" />
         <activity android:name=".activities.owners.OwnerDetailActivity" />
         <activity android:name=".activities.owners.EditOwnerActivity" />
         <activity android:name=".activities.owners.CreateOwnerActivity" />
 
-        <!-- ==================== APPOINTMENTS (CITAS) ==================== -->
         <activity android:name=".activities.appointments.AppointmentsActivity" />
         <activity android:name=".activities.appointments.AppointmentDetailActivity" />
         <activity android:name=".activities.appointments.EditAppointmentActivity" />
         <activity android:name=".activities.appointments.CreateAppointmentActivity" />
 
-        <!-- ==================== PAYMENTS (COBROS) ==================== -->
         <activity android:name=".activities.payments.PaymentsActivity" />
         <activity android:name=".activities.payments.PaymentDetailActivity" />
         <activity android:name=".activities.payments.ServiceDetailActivity" />
@@ -54,10 +49,8 @@
         <activity android:name=".activities.payments.CreatePaymentActivity" />
         <activity android:name=".activities.payments.CreateServiceActivity" />
 
-        <!-- ==================== PROFILE (PERFIL) ==================== -->
         <activity android:name=".activities.profile.ProfileActivity" />
 
-        <!-- ==================== FILE PROVIDER PARA CÁMARA ==================== -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

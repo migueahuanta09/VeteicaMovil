@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -23,6 +24,9 @@ import com.example.veteica.activities.pets.PetsActivity
 import com.example.veteica.activities.profile.ProfileActivity
 import com.example.veteica.adapters.OwnerAdapter
 import com.example.veteica.models.Owner
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class OwnersActivity : AppCompatActivity() {
 
@@ -45,8 +49,8 @@ class OwnersActivity : AppCompatActivity() {
         setupToolbar()
         setupDrawerLayout()
         setupRecyclerView()
-        setupMockData()
         setupClickListeners()
+        loadOwnersWithPetCount()
     }
 
     private fun initViews() {
@@ -82,9 +86,7 @@ class OwnersActivity : AppCompatActivity() {
                     startActivity(Intent(this, PetsActivity::class.java))
                     finish()
                 }
-                R.id.nav_owners -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
+                R.id.nav_owners -> drawerLayout.closeDrawer(GravityCompat.START)
                 R.id.nav_appointments -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     startActivity(Intent(this, AppointmentsActivity::class.java))
@@ -116,25 +118,80 @@ class OwnersActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = OwnerAdapter(ownersList) { owner ->
             val intent = Intent(this, OwnerDetailActivity::class.java)
-            intent.putExtra("owner_id", owner.id)
-            intent.putExtra("owner_code", owner.uniqueCode)  // 👈 CORREGIDO
+            intent.putExtra("owner_mongo_id", owner.mongoId)
             intent.putExtra("owner_name", owner.name)
+            intent.putExtra("owner_phone", owner.phone)
+            intent.putExtra("owner_email", owner.email)
+            intent.putExtra("owner_address", owner.address)
             startActivity(intent)
         }
         rvOwners.layoutManager = LinearLayoutManager(this)
         rvOwners.adapter = adapter
     }
 
-    private fun setupMockData() {
-        originalList.addAll(listOf(
-            Owner(1, "12345678", "José Herrera", "612-123-4567", "jose@gmail.com", "Colonia Púrpura #123", 2, null),
-            Owner(2, "87654321", "María García", "612-234-5678", "maria@gmail.com", "Calle Reforma #456", 1, null),
-            Owner(3, "11223344", "Carlos López", "612-345-6789", "carlos@gmail.com", "Blvd. Centro #789", 3, null),
-            Owner(4, "44332211", "Ana Martínez", "612-456-7890", "ana@gmail.com", "Privada del Parque #12", 1, null),
-            Owner(5, "55667788", "Luis Rodríguez", "612-567-8901", "luis@gmail.com", "Av. Universidad #234", 2, null)
-        ))
-        ownersList.addAll(originalList)
-        adapter.updateList(ownersList)
+    private fun loadOwnersWithPetCount() {
+        val token = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+            .getString("token", "") ?: ""
+
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+
+                // Llamamos ambos endpoints en paralelo
+                val ownersDeferred = async { api.getOwners() }
+                val petsDeferred = async { api.getPets() }
+
+                val ownersResponse = ownersDeferred.await()
+                val petsResponse = petsDeferred.await()
+
+                if (!ownersResponse.isSuccessful) {
+                    Toast.makeText(this@OwnersActivity, "Error cargando dueños", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Construir mapa de nombre -> cantidad de mascotas
+                val petCountByOwner = mutableMapOf<String, Int>()
+                if (petsResponse.isSuccessful) {
+                    val petsData = petsResponse.body()?.get("data") as? Map<*, *>
+                    val petsItems = petsData?.get("items") as? List<*>
+                    petsItems?.forEach { item ->
+                        val pet = item as? Map<*, *> ?: return@forEach
+                        val dueno = (pet["nombreDueno"] as? String)?.trim()?.lowercase() ?: return@forEach
+                        petCountByOwner[dueno] = (petCountByOwner[dueno] ?: 0) + 1
+                    }
+                }
+
+                // Construir lista de dueños con conteo real
+                val ownersData = ownersResponse.body()?.get("data") as? Map<*, *>
+                val ownersItems = ownersData?.get("items") as? List<*>
+
+                originalList.clear()
+                ownersList.clear()
+
+                ownersItems?.forEachIndexed { index, item ->
+                    val owner = item as? Map<*, *> ?: return@forEachIndexed
+                    val nombre = owner["nombre"] as? String ?: ""
+                    val count = petCountByOwner[nombre.trim().lowercase()] ?: 0
+
+                    originalList.add(Owner(
+                        id = index + 1,
+                        mongoId = owner["_id"] as? String ?: "",
+                        uniqueCode = owner["cedula"] as? String ?: "",
+                        name = nombre,
+                        phone = owner["telefono"] as? String ?: "",
+                        email = owner["email"] as? String ?: "",
+                        address = owner["direccion"] as? String ?: "",
+                        petsCount = count
+                    ))
+                }
+
+                ownersList.addAll(originalList)
+                adapter.updateList(ownersList)
+
+            } catch (e: Exception) {
+                Toast.makeText(this@OwnersActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setupClickListeners() {
@@ -142,9 +199,7 @@ class OwnersActivity : AppCompatActivity() {
             startActivity(Intent(this, CreateOwnerActivity::class.java))
         }
 
-        btnSearch.setOnClickListener {
-            performSearch()
-        }
+        btnSearch.setOnClickListener { performSearch() }
 
         etSearch.setOnEditorActionListener { _, _, _ ->
             performSearch()
@@ -159,8 +214,7 @@ class OwnersActivity : AppCompatActivity() {
             ownersList.addAll(originalList)
         } else {
             val filtered = originalList.filter {
-                it.id.toString().contains(query) ||
-                        it.name.lowercase().contains(query) ||
+                it.name.lowercase().contains(query) ||
                         it.uniqueCode.contains(query) ||
                         it.phone.contains(query)
             }
@@ -168,6 +222,11 @@ class OwnersActivity : AppCompatActivity() {
             ownersList.addAll(filtered)
         }
         adapter.updateList(ownersList)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadOwnersWithPetCount()
     }
 
     override fun onBackPressed() {

@@ -13,12 +13,14 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.veteica.R
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class CreatePetActivity : AppCompatActivity() {
 
@@ -86,16 +88,65 @@ class CreatePetActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
+        btnBack.setOnClickListener { finish() }
+        layoutPhoto.setOnClickListener { showImagePickerDialog() }
+        btnCreate.setOnClickListener { savePet() }
+    }
+
+    private fun savePet() {
+        val name = etName.text.toString().trim()
+        val species = spinnerSpecies.selectedItem.toString()
+        val breed = etBreed.text.toString().trim()
+        val ageStr = etAge.text.toString().trim()
+        val weightStr = etWeight.text.toString().trim()
+        val gender = spinnerGender.selectedItem.toString()
+        val color = etColor.text.toString().trim()
+        val ownerName = etOwnerName.text.toString().trim()
+        val notes = etNotes.text.toString().trim()
+
+        when {
+            name.isEmpty() -> { Toast.makeText(this, "Ingresa el nombre", Toast.LENGTH_SHORT).show(); return }
+            breed.isEmpty() -> { Toast.makeText(this, "Ingresa la raza", Toast.LENGTH_SHORT).show(); return }
+            ageStr.isEmpty() -> { Toast.makeText(this, "Ingresa la edad", Toast.LENGTH_SHORT).show(); return }
+            ownerName.isEmpty() -> { Toast.makeText(this, "Ingresa el dueño", Toast.LENGTH_SHORT).show(); return }
         }
 
-        layoutPhoto.setOnClickListener {
-            showImagePickerDialog()
-        }
+        val token = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+            .getString("token", "") ?: ""
 
-        btnCreate.setOnClickListener {
-            savePet()
+        btnCreate.isEnabled = false
+        btnCreate.text = "Guardando..."
+
+        lifecycleScope.launch {
+            try {
+                val body = mapOf(
+                    "nombre" to name,
+                    "especie" to species,
+                    "raza" to breed,
+                    "edad" to ageStr,
+                    "peso" to weightStr,
+                    "genero" to gender,
+                    "color" to color,
+                    "nombreDueno" to ownerName,
+                    "notas" to notes
+                )
+
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.createPet(body)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CreatePetActivity, "Mascota creada correctamente", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: "Error desconocido"
+                    Toast.makeText(this@CreatePetActivity, "Error: $errorMsg", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@CreatePetActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                btnCreate.isEnabled = true
+                btnCreate.text = "CREAR PACIENTE"
+            }
         }
     }
 
@@ -108,29 +159,22 @@ class CreatePetActivity : AppCompatActivity() {
                     0 -> checkPermissionsAndOpenCamera()
                     1 -> openGallery()
                 }
-            }
-            .show()
+            }.show()
     }
 
     private fun checkPermissionsAndOpenCamera() {
         val permissions = arrayOf(android.Manifest.permission.CAMERA)
-
         val hasPermissions = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-
-        if (hasPermissions) {
-            openCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
-        }
+        if (hasPermissions) openCamera()
+        else ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
     }
 
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
-            val photoUri = createImageUri()
-            photoUri?.let {
+            createImageUri()?.let {
                 currentPhotoUri = it
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, it)
                 startActivityForResult(intent, REQUEST_CODE_CAMERA)
@@ -156,69 +200,34 @@ class CreatePetActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                openCamera()
-            } else {
-                Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
-            }
+        if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+            openCamera()
+        } else {
+            Toast.makeText(this, "Se necesitan permisos para la cámara", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                REQUEST_CODE_CAMERA -> {
-                    currentPhotoUri?.let { uri ->
-                        ivPetPhoto.setImageURI(uri)
-                        ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivPetPhoto.setPadding(0, 0, 0, 0)
-                        ivPetPhoto.setColorFilter(null)
-                        ivPetPhoto.setBackgroundColor(0)
-                    }
+                REQUEST_CODE_CAMERA -> currentPhotoUri?.let {
+                    ivPetPhoto.setImageURI(it)
+                    ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                    ivPetPhoto.setPadding(0, 0, 0, 0)
+                    ivPetPhoto.setColorFilter(null)
+                    ivPetPhoto.setBackgroundColor(0)
                 }
-                REQUEST_CODE_GALLERY -> {
-                    val uri = data?.data
-                    uri?.let {
-                        currentPhotoUri = it
-                        ivPetPhoto.setImageURI(it)
-                        ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivPetPhoto.setPadding(0, 0, 0, 0)
-                        ivPetPhoto.setColorFilter(null)
-                        ivPetPhoto.setBackgroundColor(0)
-                    }
+                REQUEST_CODE_GALLERY -> data?.data?.let {
+                    currentPhotoUri = it
+                    ivPetPhoto.setImageURI(it)
+                    ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                    ivPetPhoto.setPadding(0, 0, 0, 0)
+                    ivPetPhoto.setColorFilter(null)
+                    ivPetPhoto.setBackgroundColor(0)
                 }
-            }
-        }
-    }
-
-    private fun savePet() {
-        val name = etName.text.toString().trim()
-        val species = spinnerSpecies.selectedItem.toString()
-        val breed = etBreed.text.toString().trim()
-        val age = etAge.text.toString().trim()
-        val weight = etWeight.text.toString().trim()
-        val gender = spinnerGender.selectedItem.toString()
-        val color = etColor.text.toString().trim()
-        val ownerName = etOwnerName.text.toString().trim()
-        val notes = etNotes.text.toString().trim()
-
-        when {
-            name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre de la mascota", Toast.LENGTH_SHORT).show()
-            breed.isEmpty() -> Toast.makeText(this, "Ingresa la raza", Toast.LENGTH_SHORT).show()
-            age.isEmpty() -> Toast.makeText(this, "Ingresa la edad", Toast.LENGTH_SHORT).show()
-            ownerName.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
-            else -> {
-                Toast.makeText(this, "Paciente $name creado exitosamente", Toast.LENGTH_LONG).show()
-                finish()
             }
         }
     }
