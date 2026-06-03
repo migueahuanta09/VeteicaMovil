@@ -3,6 +3,7 @@ package com.example.veteica.activities.owners
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -15,7 +16,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.veteica.R
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class CreateOwnerActivity : AppCompatActivity() {
 
@@ -27,6 +31,7 @@ class CreateOwnerActivity : AppCompatActivity() {
     private lateinit var etPhone: EditText
     private lateinit var etEmail: EditText
     private lateinit var etAddress: EditText
+    private lateinit var prefs: SharedPreferences
 
     private var currentPhotoUri: Uri? = null
     private val REQUEST_CODE_CAMERA = 100
@@ -37,6 +42,7 @@ class CreateOwnerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_owner)
 
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
         initViews()
         setupToolbar()
         setupClickListeners()
@@ -60,17 +66,9 @@ class CreateOwnerActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
-
-        layoutPhoto.setOnClickListener {
-            showImagePickerDialog()
-        }
-
-        btnCreate.setOnClickListener {
-            saveOwner()
-        }
+        btnBack.setOnClickListener { finish() }
+        layoutPhoto.setOnClickListener { showImagePickerDialog() }
+        btnCreate.setOnClickListener { saveOwner() }
     }
 
     private fun showImagePickerDialog() {
@@ -88,23 +86,17 @@ class CreateOwnerActivity : AppCompatActivity() {
 
     private fun checkPermissionsAndOpenCamera() {
         val permissions = arrayOf(android.Manifest.permission.CAMERA)
-
         val hasPermissions = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-
-        if (hasPermissions) {
-            openCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
-        }
+        if (hasPermissions) openCamera()
+        else ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
     }
 
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
-            val photoUri = createImageUri()
-            photoUri?.let {
+            createImageUri()?.let {
                 currentPhotoUri = it
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, it)
                 startActivityForResult(intent, REQUEST_CODE_CAMERA)
@@ -130,46 +122,25 @@ class CreateOwnerActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                openCamera()
-            } else {
-                Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
-            }
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) openCamera()
+            else Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CODE_CAMERA -> {
-                    currentPhotoUri?.let { uri ->
-                        ivOwnerPhoto.setImageURI(uri)
-                        ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivOwnerPhoto.setPadding(0, 0, 0, 0)
-                        ivOwnerPhoto.setColorFilter(null)
-                        ivOwnerPhoto.setBackgroundColor(0)
-                    }
-                }
-                REQUEST_CODE_GALLERY -> {
-                    val uri = data?.data
-                    uri?.let {
-                        currentPhotoUri = it
-                        ivOwnerPhoto.setImageURI(it)
-                        ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivOwnerPhoto.setPadding(0, 0, 0, 0)
-                        ivOwnerPhoto.setColorFilter(null)
-                        ivOwnerPhoto.setBackgroundColor(0)
-                    }
-                }
+            val uri = if (requestCode == REQUEST_CODE_CAMERA) currentPhotoUri else data?.data
+            uri?.let {
+                currentPhotoUri = it
+                ivOwnerPhoto.setImageURI(it)
+                ivOwnerPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                ivOwnerPhoto.setPadding(0, 0, 0, 0)
+                ivOwnerPhoto.setColorFilter(null)
+                ivOwnerPhoto.setBackgroundColor(0)
             }
         }
     }
@@ -181,13 +152,38 @@ class CreateOwnerActivity : AppCompatActivity() {
         val address = etAddress.text.toString().trim()
 
         when {
-            name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
-            phone.isEmpty() -> Toast.makeText(this, "Ingresa el teléfono", Toast.LENGTH_SHORT).show()
-            email.isEmpty() -> Toast.makeText(this, "Ingresa el correo electrónico", Toast.LENGTH_SHORT).show()
-            address.isEmpty() -> Toast.makeText(this, "Ingresa la dirección", Toast.LENGTH_SHORT).show()
-            else -> {
-                Toast.makeText(this, "Dueño $name creado exitosamente", Toast.LENGTH_LONG).show()
-                finish()
+            name.isEmpty() -> { Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show(); return }
+            phone.isEmpty() -> { Toast.makeText(this, "Ingresa el teléfono", Toast.LENGTH_SHORT).show(); return }
+            email.isEmpty() -> { Toast.makeText(this, "Ingresa el correo electrónico", Toast.LENGTH_SHORT).show(); return }
+            address.isEmpty() -> { Toast.makeText(this, "Ingresa la dirección", Toast.LENGTH_SHORT).show(); return }
+        }
+
+        val token = prefs.getString("token", "") ?: ""
+        btnCreate.isEnabled = false
+        btnCreate.text = "Guardando..."
+
+        lifecycleScope.launch {
+            try {
+                val body = mapOf(
+                    "nombre" to name,
+                    "telefono" to phone,
+                    "email" to email,
+                    "direccion" to address
+                )
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.createOwner(body)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CreateOwnerActivity, "Dueño $name creado exitosamente", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@CreateOwnerActivity, "Error al crear dueño", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@CreateOwnerActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                btnCreate.isEnabled = true
+                btnCreate.text = "CREAR DUEÑO"
             }
         }
     }

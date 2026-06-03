@@ -3,6 +3,7 @@ package com.example.veteica.activities.pets
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -18,7 +19,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.veteica.R
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class EditPetActivity : AppCompatActivity() {
 
@@ -36,8 +40,9 @@ class EditPetActivity : AppCompatActivity() {
     private lateinit var etColor: EditText
     private lateinit var etOwnerName: EditText
     private lateinit var etNotes: EditText
+    private lateinit var prefs: SharedPreferences
 
-    private var petId: Int = 0
+    private var petMongoId: String = ""
     private var currentPhotoUri: Uri? = null
     private val REQUEST_CODE_CAMERA = 100
     private val REQUEST_CODE_GALLERY = 101
@@ -47,6 +52,7 @@ class EditPetActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_pet)
 
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
         initViews()
         setupToolbar()
         setupSpinners()
@@ -90,38 +96,39 @@ class EditPetActivity : AppCompatActivity() {
     }
 
     private fun loadPetData() {
-        petId = intent.getIntExtra("pet_id", 1)
-        val petName = intent.getStringExtra("pet_name") ?: "Max"
+        petMongoId = intent.getStringExtra("pet_mongo_id") ?: ""
+        val petName = intent.getStringExtra("pet_name") ?: ""
+        val petSpecies = intent.getStringExtra("pet_species") ?: ""
+        val petBreed = intent.getStringExtra("pet_breed") ?: ""
+        val petAge = intent.getIntExtra("pet_age", 0)
+        val petWeight = intent.getDoubleExtra("pet_weight", 0.0)
+        val petGender = intent.getStringExtra("pet_gender") ?: ""
+        val petColor = intent.getStringExtra("pet_color") ?: ""
+        val petOwnerName = intent.getStringExtra("pet_owner_name") ?: ""
+        val petNotes = intent.getStringExtra("pet_notes") ?: ""
 
-        // Datos mock para edición
         etName.setText(petName)
-        // Seleccionar especie "Perro" (posición 0)
-        spinnerSpecies.setSelection(0)
-        etBreed.setText("Labrador Retriever")
-        etAge.setText("3")
-        etWeight.setText("28.5")
-        spinnerGender.setSelection(0) // Macho
-        etColor.setText("Dorado")
-        etOwnerName.setText("Juan Pérez")
-        etNotes.setText("Paciente activo, sin alergias conocidas")
+        etBreed.setText(petBreed)
+        etAge.setText(petAge.toString())
+        etWeight.setText(petWeight.toString())
+        etColor.setText(petColor)
+        etOwnerName.setText(petOwnerName)
+        etNotes.setText(petNotes)
+
+        val speciesList = arrayOf("Perro", "Gato", "Conejo", "Ave", "Reptil", "Otro")
+        val speciesIndex = speciesList.indexOfFirst { it.equals(petSpecies, ignoreCase = true) }
+        if (speciesIndex >= 0) spinnerSpecies.setSelection(speciesIndex)
+
+        val genderList = arrayOf("Macho", "Hembra")
+        val genderIndex = genderList.indexOfFirst { it.equals(petGender, ignoreCase = true) }
+        if (genderIndex >= 0) spinnerGender.setSelection(genderIndex)
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
-
-        layoutPhoto.setOnClickListener {
-            showImagePickerDialog()
-        }
-
-        btnSaveToolbar.setOnClickListener {
-            updatePet()
-        }
-
-        btnUpdate.setOnClickListener {
-            updatePet()
-        }
+        btnBack.setOnClickListener { finish() }
+        layoutPhoto.setOnClickListener { showImagePickerDialog() }
+        btnSaveToolbar.setOnClickListener { updatePet() }
+        btnUpdate.setOnClickListener { updatePet() }
     }
 
     private fun showImagePickerDialog() {
@@ -138,26 +145,18 @@ class EditPetActivity : AppCompatActivity() {
     }
 
     private fun checkPermissionsAndOpenCamera() {
-        val permissions = arrayOf(
-            android.Manifest.permission.CAMERA
-        )
-
+        val permissions = arrayOf(android.Manifest.permission.CAMERA)
         val hasPermissions = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-
-        if (hasPermissions) {
-            openCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
-        }
+        if (hasPermissions) openCamera()
+        else ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
     }
 
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
-            val photoUri = createImageUri()
-            photoUri?.let {
+            createImageUri()?.let {
                 currentPhotoUri = it
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, it)
                 startActivityForResult(intent, REQUEST_CODE_CAMERA)
@@ -183,44 +182,24 @@ class EditPetActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                openCamera()
-            } else {
-                Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
-            }
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) openCamera()
+            else Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CODE_CAMERA -> {
-                    currentPhotoUri?.let { uri ->
-                        ivPetPhoto.setImageURI(uri)
-                        ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivPetPhoto.setPadding(0, 0, 0, 0)
-                        ivPetPhoto.setColorFilter(null)
-                    }
-                }
-                REQUEST_CODE_GALLERY -> {
-                    val uri = data?.data
-                    uri?.let {
-                        currentPhotoUri = it
-                        ivPetPhoto.setImageURI(it)
-                        ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
-                        ivPetPhoto.setPadding(0, 0, 0, 0)
-                        ivPetPhoto.setColorFilter(null)
-                    }
-                }
+            val uri = if (requestCode == REQUEST_CODE_CAMERA) currentPhotoUri else data?.data
+            uri?.let {
+                currentPhotoUri = it
+                ivPetPhoto.setImageURI(it)
+                ivPetPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                ivPetPhoto.setPadding(0, 0, 0, 0)
+                ivPetPhoto.setColorFilter(null)
             }
         }
     }
@@ -237,13 +216,48 @@ class EditPetActivity : AppCompatActivity() {
         val notes = etNotes.text.toString().trim()
 
         when {
-            name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre de la mascota", Toast.LENGTH_SHORT).show()
-            breed.isEmpty() -> Toast.makeText(this, "Ingresa la raza", Toast.LENGTH_SHORT).show()
-            age.isEmpty() -> Toast.makeText(this, "Ingresa la edad", Toast.LENGTH_SHORT).show()
-            ownerName.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
-            else -> {
-                Toast.makeText(this, "Paciente $name actualizado correctamente", Toast.LENGTH_LONG).show()
-                finish()
+            name.isEmpty() -> { Toast.makeText(this, "Ingresa el nombre de la mascota", Toast.LENGTH_SHORT).show(); return }
+            breed.isEmpty() -> { Toast.makeText(this, "Ingresa la raza", Toast.LENGTH_SHORT).show(); return }
+            age.isEmpty() -> { Toast.makeText(this, "Ingresa la edad", Toast.LENGTH_SHORT).show(); return }
+            ownerName.isEmpty() -> { Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show(); return }
+        }
+
+        if (petMongoId.isEmpty()) {
+            Toast.makeText(this, "Error: ID de mascota no encontrado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val token = prefs.getString("token", "") ?: ""
+        btnUpdate.isEnabled = false
+        btnUpdate.text = "Guardando..."
+
+        lifecycleScope.launch {
+            try {
+                val body = mapOf(
+                    "nombre" to name,
+                    "especie" to species,
+                    "raza" to breed,
+                    "edad" to age,
+                    "peso" to weight,
+                    "sexo" to gender,
+                    "color" to color,
+                    "nombreDueno" to ownerName,
+                    "notas" to notes
+                )
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.updatePet(petMongoId, body)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(this@EditPetActivity, "Mascota $name actualizada correctamente", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@EditPetActivity, "Error al actualizar mascota", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@EditPetActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                btnUpdate.isEnabled = true
+                btnUpdate.text = "ACTUALIZAR"
             }
         }
     }

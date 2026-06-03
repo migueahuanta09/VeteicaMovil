@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -36,7 +35,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var etCedula: EditText
     private lateinit var etSpecialty: EditText
 
-    // Variables para la foto
     private var currentPhotoPath: String = ""
     private var selectedImageUri: Uri? = null
     private val REQUEST_CODE_CAMERA = 100
@@ -73,27 +71,23 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun loadUserData() {
-        val fullName = "Dra. María González"
-        val email = "dra.maria@veteica.com"
-        val phone = "612-123-4567"
-        val cedula = "VET-12345-6789"
-        val specialty = "Medicina Interna"
+        val prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+
+        val nombre = prefs.getString("user_name", "") ?: ""
+        val apellido = prefs.getString("user_apellido", "") ?: ""
+        val fullName = if (apellido.isNotEmpty()) "$nombre $apellido" else nombre
 
         etFullName.setText(fullName)
-        etEmail.setText(email)
-        etPhone.setText(phone)
-        etCedula.setText(cedula)
-        etSpecialty.setText(specialty)
+        etEmail.setText(prefs.getString("user_email", "") ?: "")
+        etPhone.setText(prefs.getString("user_phone", "") ?: "")
+        etCedula.setText(prefs.getString("user_cedula", "") ?: "")
+        etSpecialty.setText(prefs.getString("user_specialty", "") ?: "")
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
-        layoutPhoto.setOnClickListener {
-            showImagePickerDialog()
-        }
+        layoutPhoto.setOnClickListener { showImagePickerDialog() }
 
         btnSave.setOnClickListener {
             val fullName = etFullName.text.toString().trim()
@@ -103,15 +97,23 @@ class ProfileActivity : AppCompatActivity() {
             val specialty = etSpecialty.text.toString().trim()
 
             when {
-                fullName.isEmpty() -> Toast.makeText(this, "Ingresa tu nombre completo", Toast.LENGTH_SHORT).show()
-                email.isEmpty() -> Toast.makeText(this, "Ingresa tu correo electrónico", Toast.LENGTH_SHORT).show()
-                phone.isEmpty() -> Toast.makeText(this, "Ingresa tu teléfono", Toast.LENGTH_SHORT).show()
-                cedula.isEmpty() -> Toast.makeText(this, "Ingresa tu cédula profesional", Toast.LENGTH_SHORT).show()
-                specialty.isEmpty() -> Toast.makeText(this, "Ingresa tu especialidad", Toast.LENGTH_SHORT).show()
-                else -> {
-                    Toast.makeText(this, "Perfil actualizado correctamente", Toast.LENGTH_LONG).show()
-                }
+                fullName.isEmpty() -> { Toast.makeText(this, "Ingresa tu nombre", Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+                email.isEmpty() -> { Toast.makeText(this, "Ingresa tu correo", Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+                phone.isEmpty() -> { Toast.makeText(this, "Ingresa tu teléfono", Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+                cedula.isEmpty() -> { Toast.makeText(this, "Ingresa tu cédula", Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+                specialty.isEmpty() -> { Toast.makeText(this, "Ingresa tu especialidad", Toast.LENGTH_SHORT).show(); return@setOnClickListener }
             }
+
+            val prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+            prefs.edit()
+                .putString("user_name", fullName)
+                .putString("user_email", email)
+                .putString("user_phone", phone)
+                .putString("user_cedula", cedula)
+                .putString("user_specialty", specialty)
+                .apply()
+
+            Toast.makeText(this, "Perfil actualizado correctamente", Toast.LENGTH_LONG).show()
         }
 
         btnLogout.setOnClickListener {
@@ -119,6 +121,8 @@ class ProfileActivity : AppCompatActivity() {
                 .setTitle("Cerrar Sesión")
                 .setMessage("¿Estás seguro de que deseas cerrar sesión?")
                 .setPositiveButton("Sí") { _, _ ->
+                    val prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+                    prefs.edit().clear().apply()
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -138,25 +142,16 @@ class ProfileActivity : AppCompatActivity() {
                     0 -> checkPermissionsAndOpenCamera()
                     1 -> openGallery()
                 }
-            }
-            .show()
+            }.show()
     }
 
     private fun checkPermissionsAndOpenCamera() {
-        val permissions = arrayOf(
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-
+        val permissions = arrayOf(android.Manifest.permission.CAMERA)
         val hasPermissions = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-
-        if (hasPermissions) {
-            openCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
-        }
+        if (hasPermissions) openCamera()
+        else ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSIONS)
     }
 
     private fun openCamera() {
@@ -164,11 +159,7 @@ class ProfileActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             val photoFile = createImageFile()
             photoFile?.let {
-                val photoURI = FileProvider.getUriForFile(
-                    this,
-                    "${packageName}.fileprovider",
-                    it
-                )
+                val photoURI = FileProvider.getUriForFile(this, "${packageName}.fileprovider", it)
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 startActivityForResult(intent, REQUEST_CODE_CAMERA)
             }
@@ -195,24 +186,17 @@ class ProfileActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                openCamera()
-            } else {
-                Toast.makeText(this, "Se necesitan permisos para usar la cámara", Toast.LENGTH_SHORT).show()
-            }
+        if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+            openCamera()
+        } else {
+            Toast.makeText(this, "Se necesitan permisos para la cámara", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_CODE_CAMERA -> {

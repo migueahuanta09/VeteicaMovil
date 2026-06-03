@@ -1,6 +1,6 @@
 package com.example.veteica.activities.payments
 
-import android.content.Intent  // 👈 AGREGA ESTA LÍNEA
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
@@ -25,6 +25,7 @@ class PaymentDetailActivity : AppCompatActivity() {
     private lateinit var tvStock: TextView
 
     private var productId: Int = 0
+    private var productMongoId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,6 @@ class PaymentDetailActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
         val productName = intent.getStringExtra("product_name") ?: "Producto"
         val toolbarTitle = findViewById<TextView>(R.id.tvToolbarTitle)
         toolbarTitle.text = "Cobro de $productName"
@@ -63,26 +63,25 @@ class PaymentDetailActivity : AppCompatActivity() {
 
     private fun loadProductData() {
         productId = intent.getIntExtra("product_id", 1)
-        val productName = intent.getStringExtra("product_name") ?: "Nobivac"
+        productMongoId = intent.getStringExtra("product_mongo_id") ?: ""
 
-        tvProductName.text = productName
-        tvExpiryDate.text = "20/10/2030"
-        tvDosage.text = "1 dosis"
-        tvPrice.text = "$1,000"
-        tvIndications.text = "Para la inmunización activa contra la rabia de perros, gatos y turones."
-        tvFormula.text = "Cultivo del virus de la rabia, clonado de la cepa Pasteur RIVM"
-        tvAdministration.text = "Por vía subcutánea o intramuscular."
-        tvStock.text = "10 unidades"
+        tvProductName.text = intent.getStringExtra("product_name") ?: ""
+        tvExpiryDate.text = intent.getStringExtra("product_expiry") ?: ""
+        tvDosage.text = intent.getStringExtra("product_dose") ?: ""
+        tvPrice.text = "$${intent.getDoubleExtra("product_price", 0.0)}"
+        tvIndications.text = intent.getStringExtra("product_indications") ?: ""
+        tvFormula.text = intent.getStringExtra("product_formula") ?: ""
+        tvAdministration.text = intent.getStringExtra("product_administration") ?: ""
+        tvStock.text = "${intent.getIntExtra("product_stock", 0)} unidades"
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnEdit.setOnClickListener {
             val intent = Intent(this, EditPaymentActivity::class.java)
             intent.putExtra("product_id", productId)
+            intent.putExtra("product_mongo_id", productMongoId)
             intent.putExtra("product_name", tvProductName.text.toString())
             startActivity(intent)
         }
@@ -92,8 +91,6 @@ class PaymentDetailActivity : AppCompatActivity() {
             finish()
         }
 
-        btnCancel.setOnClickListener {
-            finish()
-        }
+        btnCancel.setOnClickListener { finish() }
     }
 }

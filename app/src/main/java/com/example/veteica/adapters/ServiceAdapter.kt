@@ -54,7 +54,7 @@ class ServiceAdapter(
 
             tvQuantity.text = service.quantity.toString()
             tvName.text = service.name
-            tvVeterinarians.text = service.veterinarians.toString()
+            tvVeterinarians.text = service.vets.toString()
             tvPrice.text = format.format(service.price)
         }
     }

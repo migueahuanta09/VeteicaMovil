@@ -1,12 +1,14 @@
 package com.example.veteica.activities.pets
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.veteica.R
@@ -14,6 +16,8 @@ import com.example.veteica.adapters.HistorialAdapter
 import com.example.veteica.adapters.VacunaAdapter
 import com.example.veteica.models.Historial
 import com.example.veteica.models.Vacuna
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class PetDetailActivity : AppCompatActivity() {
 
@@ -29,14 +33,27 @@ class PetDetailActivity : AppCompatActivity() {
     private lateinit var tvOwnerAddress: TextView
     private lateinit var rvHistorialClinico: RecyclerView
     private lateinit var rvVacunas: RecyclerView
+    private lateinit var prefs: SharedPreferences
+
+    private var petMongoId: String = ""
+    private var petName: String = ""
+    private var petSpecies: String = ""
+    private var petBreed: String = ""
+    private var petAge: Int = 0
+    private var petWeight: Double = 0.0
+    private var petGender: String = ""
+    private var petColor: String = ""
+    private var petOwnerName: String = ""
+    private var petNotes: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pet_detail)
 
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
         initViews()
         setupToolbar()
-        loadMockData()
+        loadPetData()
         setupClickListeners()
     }
 
@@ -61,59 +78,112 @@ class PetDetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun loadMockData() {
-        // Datos de la mascota
-        val petId = intent.getIntExtra("pet_id", 1)
-        val petName = intent.getStringExtra("pet_name") ?: "Lilo"
+    private fun loadPetData() {
+        petMongoId = intent.getStringExtra("pet_mongo_id") ?: ""
+        petName = intent.getStringExtra("pet_name") ?: ""
+        petSpecies = intent.getStringExtra("pet_species") ?: ""
+        petBreed = intent.getStringExtra("pet_breed") ?: ""
+        petAge = intent.getIntExtra("pet_age", 0)
+        petWeight = intent.getDoubleExtra("pet_weight", 0.0)
+        petGender = intent.getStringExtra("pet_gender") ?: ""
+        petColor = intent.getStringExtra("pet_color") ?: ""
+        petOwnerName = intent.getStringExtra("pet_owner_name") ?: ""
+        petNotes = intent.getStringExtra("pet_notes") ?: ""
 
         tvPetName.text = petName
-        tvSpecies.text = "Perro"
-        tvBreed.text = "Labrador Retriever"
-        tvAge.text = "3 años"
-        tvGender.text = "Macho"
-        tvOwnerName.text = "Juan Pérez"
-        tvOwnerPhone.text = "555-1234-567"
-        tvOwnerAddress.text = "Av. Principal #123, Col. Centro"
+        tvSpecies.text = petSpecies
+        tvBreed.text = petBreed
+        tvAge.text = "$petAge años"
+        tvGender.text = petGender
+        tvOwnerName.text = petOwnerName
+        tvOwnerPhone.text = ""
+        tvOwnerAddress.text = ""
 
-        // Historial Clínico
-        val historialList = listOf(
-            Historial(1, "Consulta general", "15/01/2025", "Infección respiratoria", "Dra. María González"),
-            Historial(2, "Vacunación", "10/01/2025", "Vacuna antirrábica", "Dr. Carlos López"),
-            Historial(3, "Revisión", "05/01/2025", "Control de peso", "Dra. Ana Martínez"),
-            Historial(4, "Emergencia", "28/12/2024", "Herida en pata", "Dr. Luis Rodríguez"),
-            Historial(5, "Consulta general", "20/12/2024", "Chequeo anual", "Dra. María González")
-        )
-
-        rvHistorialClinico.layoutManager = LinearLayoutManager(this)
-        rvHistorialClinico.adapter = HistorialAdapter(historialList) { historial ->
-            Toast.makeText(this, "Consulta: ${historial.consulta}", Toast.LENGTH_SHORT).show()
+        if (petMongoId.isNotEmpty()) {
+            loadHistorial()
+            loadVacunas()
         }
+    }
 
-        // Historial Vacunas
-        val vacunasList = listOf(
-            Vacuna(1, "Rabia", "1 dosis", "10/01/2025"),
-            Vacuna(2, "Parvovirus", "3 dosis", "05/01/2025"),
-            Vacuna(3, "Moquillo", "2 dosis", "01/01/2025"),
-            Vacuna(4, "Hepatitis", "1 dosis", "28/12/2024"),
-            Vacuna(5, "Leptospirosis", "2 dosis", "20/12/2024")
-        )
+    private fun loadHistorial() {
+        val token = prefs.getString("token", "") ?: ""
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.getMedicalHistory(petMongoId)
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val data = body?.get("data") as? Map<*, *>
+                    val items = data?.get("historialClinico") as? List<*>
+                    val historialList = mutableListOf<Historial>()
+                    items?.forEachIndexed { index, item ->
+                        val map = item as? Map<*, *> ?: return@forEachIndexed
+                        historialList.add(Historial(
+                            id = index + 1,
+                            consulta = map["consulta"] as? String ?: "",
+                            fecha = map["fecha"] as? String ?: "",
+                            diagnostico = map["diagnostico"] as? String ?: "",
+                            veterinario = map["veterinario"] as? String ?: ""
+                        ))
+                    }
+                    rvHistorialClinico.layoutManager = LinearLayoutManager(this@PetDetailActivity)
+                    rvHistorialClinico.adapter = HistorialAdapter(historialList) { historial ->
+                        Toast.makeText(this@PetDetailActivity, "Consulta: ${historial.consulta}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@PetDetailActivity, "Error cargando historial", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
-        rvVacunas.layoutManager = LinearLayoutManager(this)
-        rvVacunas.adapter = VacunaAdapter(vacunasList) { vacuna ->
-            Toast.makeText(this, "Vacuna: ${vacuna.nombre}", Toast.LENGTH_SHORT).show()
+    private fun loadVacunas() {
+        val token = prefs.getString("token", "") ?: ""
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.getVaccines(petMongoId)
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val data = body?.get("data") as? Map<*, *>
+                    val items = data?.get("vacunas") as? List<*>
+                    val vacunasList = mutableListOf<Vacuna>()
+                    items?.forEachIndexed { index, item ->
+                        val map = item as? Map<*, *> ?: return@forEachIndexed
+                        vacunasList.add(Vacuna(
+                            id = index + 1,
+                            nombre = map["nombre"] as? String ?: "",
+                            cantidad = map["cantidad"] as? String ?: "",
+                            fecha = map["fecha"] as? String ?: ""
+                        ))
+                    }
+                    rvVacunas.layoutManager = LinearLayoutManager(this@PetDetailActivity)
+                    rvVacunas.adapter = VacunaAdapter(vacunasList) { vacuna ->
+                        Toast.makeText(this@PetDetailActivity, "Vacuna: ${vacuna.nombre}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@PetDetailActivity, "Error cargando vacunas", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnEdit.setOnClickListener {
-            val intent = Intent(this, EditPetActivity::class.java)
-            intent.putExtra("pet_id", intent.getIntExtra("pet_id", 1))
-            intent.putExtra("pet_name", tvPetName.text.toString())
-            startActivity(intent)
+            val editIntent = Intent(this, EditPetActivity::class.java)
+            editIntent.putExtra("pet_mongo_id", petMongoId)
+            editIntent.putExtra("pet_name", petName)
+            editIntent.putExtra("pet_species", petSpecies)
+            editIntent.putExtra("pet_breed", petBreed)
+            editIntent.putExtra("pet_age", petAge)
+            editIntent.putExtra("pet_weight", petWeight)
+            editIntent.putExtra("pet_gender", petGender)
+            editIntent.putExtra("pet_color", petColor)
+            editIntent.putExtra("pet_owner_name", petOwnerName)
+            editIntent.putExtra("pet_notes", petNotes)
+            startActivity(editIntent)
         }
     }
 }

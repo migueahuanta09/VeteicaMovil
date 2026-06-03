@@ -52,9 +52,24 @@ class LoginActivity : AppCompatActivity() {
                         if (success == true) {
                             val data = responseBody["data"] as? Map<*, *>
                             val token = data?.get("token") as? String
+                            val user = data?.get("user") as? Map<*, *>
+
+                            val userName = user?.get("nombre") as? String ?: ""
+                            val apellido = user?.get("apellido") as? String ?: ""
+                            val userCedula = user?.get("cedula") as? String ?: ""
+                            val userEmail = user?.get("email") as? String ?: ""
+                            val telefono = user?.get("telefono") as? String ?: ""
 
                             if (token != null) {
-                                prefs.edit().putString("token", token).apply()
+                                prefs.edit()
+                                    .putString("token", token)
+                                    .putString("user_name", userName)
+                                    .putString("user_apellido", apellido)
+                                    .putString("user_cedula", userCedula)
+                                    .putString("user_email", userEmail)
+                                    .putString("user_phone", telefono)
+                                    .apply()
+
                                 Toast.makeText(this@LoginActivity, "Bienvenido a VETEICA", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
                                 finish()
