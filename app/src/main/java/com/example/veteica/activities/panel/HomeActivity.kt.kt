@@ -18,6 +18,7 @@ import com.example.veteica.R
 import com.example.veteica.activities.appointments.AppointmentsActivity
 import com.example.veteica.activities.appointments.CreateAppointmentActivity
 import com.example.veteica.activities.auth.LoginActivity
+import com.example.veteica.activities.owners.CreateOwnerActivity
 import com.example.veteica.activities.owners.OwnersActivity
 import com.example.veteica.activities.payments.CreatePaymentActivity
 import com.example.veteica.activities.payments.PaymentsActivity
@@ -178,9 +179,9 @@ class HomeActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnNewPayment).setOnClickListener {
             startActivity(Intent(this, CreatePaymentActivity::class.java))
         }
-        findViewById<MaterialButton>(R.id.btnReports).setOnClickListener {
-            Toast.makeText(this, "Reportes - Próximamente", Toast.LENGTH_SHORT).show()
-        }
+        findViewById<MaterialButton>(R.id.btnOwner).setOnClickListener {
+
+            startActivity(Intent(this, CreateOwnerActivity::class.java))        }
     }
 
     private fun setupPieCharts() {

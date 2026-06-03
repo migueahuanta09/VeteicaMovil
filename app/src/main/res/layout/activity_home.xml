@@ -286,13 +286,13 @@
                         android:textColor="#2E7D32"/>
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnReports"
+                        android:id="@+id/btnOwner"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
-                        android:text="Reportes"
+                        android:text="Nuevo Dueño"
                         android:textSize="13sp"
-                        app:icon="@drawable/ic_search"
+                        app:icon="@drawable/ic_add"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         app:iconGravity="textStart"
                         app:strokeColor="#2E7D32"
