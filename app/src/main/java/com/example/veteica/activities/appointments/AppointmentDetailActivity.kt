@@ -1,14 +1,18 @@
 package com.example.veteica.activities.appointments
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.example.veteica.R
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class AppointmentDetailActivity : AppCompatActivity() {
 
@@ -25,17 +29,20 @@ class AppointmentDetailActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private lateinit var tvReason: TextView
     private lateinit var tvDiagnosis: TextView
+    private lateinit var prefs: SharedPreferences
 
     private var appointmentId: Int = 0
+    private var appointmentMongoId: String = ""
     private var appointmentPetName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_appointment_detail)
 
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
         initViews()
         setupToolbar()
-        loadMockData()
+        loadData()
         setupClickListeners()
     }
 
@@ -61,24 +68,25 @@ class AppointmentDetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun loadMockData() {
-        appointmentId = intent.getIntExtra("appointment_id", 1)
-        appointmentPetName = intent.getStringExtra("appointment_pet") ?: "Lilo"
+    private fun loadData() {
+        appointmentId = intent.getIntExtra("appointment_id", 0)
+        appointmentMongoId = intent.getStringExtra("appointment_mongo_id") ?: ""
+        appointmentPetName = intent.getStringExtra("appointment_pet") ?: ""
 
         tvPetName.text = appointmentPetName
-        tvDate.text = "20/10/2025"
-        tvTime.text = "10:00 AM"
-        tvOwnerName.text = "Jose Herrera"
-        tvVeterinarian.text = "Navarro admin"
-        tvReason.text = "Ligero problema en el oído."
-        tvDiagnosis.text = "Infección en el oído."
+        tvDate.text = intent.getStringExtra("appointment_date") ?: ""
+        tvTime.text = intent.getStringExtra("appointment_time") ?: ""
+        tvOwnerName.text = intent.getStringExtra("appointment_owner") ?: ""
+        tvVeterinarian.text = intent.getStringExtra("appointment_vet") ?: ""
+        tvReason.text = intent.getStringExtra("appointment_reason") ?: ""
+        tvDiagnosis.text = intent.getStringExtra("appointment_diagnosis") ?: ""
 
-        updateStatusUI("Pendiente")
+        val status = intent.getStringExtra("appointment_status") ?: "Pendiente"
+        updateStatusUI(status)
     }
 
     private fun updateStatusUI(status: String) {
         tvStatus.text = status
-
         when (status) {
             "Pendiente" -> tvStatus.setBackgroundResource(R.drawable.bg_status_orange)
             "Confirmada" -> tvStatus.setBackgroundResource(R.drawable.bg_status_blue)
@@ -87,7 +95,6 @@ class AppointmentDetailActivity : AppCompatActivity() {
                 btnComplete.isEnabled = false
                 btnComplete.text = "Cita completada"
             }
-            "Revisado" -> tvStatus.setBackgroundResource(R.drawable.bg_status_green)
             "Cancelada" -> {
                 tvStatus.setBackgroundResource(R.drawable.bg_status_red)
                 btnCancel.isEnabled = false
@@ -97,28 +104,68 @@ class AppointmentDetailActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnEdit.setOnClickListener {
             val intent = Intent(this, EditAppointmentActivity::class.java)
             intent.putExtra("appointment_id", appointmentId)
+            intent.putExtra("appointment_mongo_id", appointmentMongoId)
             startActivity(intent)
         }
 
         btnComplete.setOnClickListener {
-            Toast.makeText(this, "Cita marcada como Completada", Toast.LENGTH_SHORT).show()
-            updateStatusUI("Completada")
+            if (appointmentMongoId.isEmpty()) {
+                Toast.makeText(this, "Error: ID de cita no encontrado", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val token = prefs.getString("token", "") ?: ""
+            btnComplete.isEnabled = false
+            btnComplete.text = "Guardando..."
 
-            // Enviar a cobros pendientes
-            val message = "La cita de $appointmentPetName ha sido agregada a la lista de cobros pendientes"
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            lifecycleScope.launch {
+                try {
+                    val api = RetrofitClient.instanceWithToken(token)
+                    val response = api.completeAppointment(appointmentMongoId)
+                    if (response.isSuccessful) {
+                        updateStatusUI("Completada")
+                        Toast.makeText(this@AppointmentDetailActivity, "Cita completada correctamente", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@AppointmentDetailActivity, "Error al completar cita", Toast.LENGTH_SHORT).show()
+                        btnComplete.isEnabled = true
+                        btnComplete.text = "COMPLETAR"
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@AppointmentDetailActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+                    btnComplete.isEnabled = true
+                    btnComplete.text = "COMPLETAR"
+                }
+            }
         }
 
         btnCancel.setOnClickListener {
-            Toast.makeText(this, "Cita cancelada", Toast.LENGTH_SHORT).show()
-            updateStatusUI("Cancelada")
+            if (appointmentMongoId.isEmpty()) {
+                Toast.makeText(this, "Error: ID de cita no encontrado", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val token = prefs.getString("token", "") ?: ""
+            btnCancel.isEnabled = false
+
+            lifecycleScope.launch {
+                try {
+                    val api = RetrofitClient.instanceWithToken(token)
+                    val response = api.cancelAppointment(appointmentMongoId)
+                    if (response.isSuccessful) {
+                        updateStatusUI("Cancelada")
+                        Toast.makeText(this@AppointmentDetailActivity, "Cita cancelada", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@AppointmentDetailActivity, "Error al cancelar cita", Toast.LENGTH_SHORT).show()
+                        btnCancel.isEnabled = true
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@AppointmentDetailActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+                    btnCancel.isEnabled = true
+                }
+            }
         }
     }
 }

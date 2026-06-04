@@ -1,13 +1,16 @@
 package com.example.veteica.activities.payments
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.veteica.R
+import com.example.veteica.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 class CreatePaymentActivity : AppCompatActivity() {
 
@@ -22,11 +25,13 @@ class CreatePaymentActivity : AppCompatActivity() {
     private lateinit var etFormula: EditText
     private lateinit var etAdministration: EditText
     private lateinit var etStock: EditText
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_payment)
 
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
         initViews()
         setupToolbar()
         setupClickListeners()
@@ -53,19 +58,9 @@ class CreatePaymentActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        btnBack.setOnClickListener {
-            finish()
-        }
-
-        btnCancel.setOnClickListener {
-            finish()
-        }
-
-
-
-        btnSave.setOnClickListener {
-            saveProduct()
-        }
+        btnBack.setOnClickListener { finish() }
+        btnCancel.setOnClickListener { finish() }
+        btnSave.setOnClickListener { saveProduct() }
     }
 
     private fun saveProduct() {
@@ -79,11 +74,41 @@ class CreatePaymentActivity : AppCompatActivity() {
         val stock = etStock.text.toString().trim()
 
         when {
-            name.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del producto", Toast.LENGTH_SHORT).show()
-            price.isEmpty() -> Toast.makeText(this, "Ingresa el precio", Toast.LENGTH_SHORT).show()
-            else -> {
-                Toast.makeText(this, "Producto $name creado correctamente", Toast.LENGTH_LONG).show()
-                finish()
+            name.isEmpty() -> { Toast.makeText(this, "Ingresa el nombre del producto", Toast.LENGTH_SHORT).show(); return }
+            price.isEmpty() -> { Toast.makeText(this, "Ingresa el precio", Toast.LENGTH_SHORT).show(); return }
+            expiryDate.isEmpty() -> { Toast.makeText(this, "Ingresa la fecha de caducidad", Toast.LENGTH_SHORT).show(); return }
+            stock.isEmpty() -> { Toast.makeText(this, "Ingresa la existencia", Toast.LENGTH_SHORT).show(); return }
+        }
+
+        val token = prefs.getString("token", "") ?: ""
+        btnSave.isEnabled = false
+        btnSave.text = "Guardando..."
+
+        lifecycleScope.launch {
+            try {
+                val body = mapOf(
+                    "nombre" to name,
+                    "fechaCaducidad" to expiryDate,
+                    "dosis" to dosage,
+                    "precio" to price,
+                    "indicaciones" to indications,
+                    "formula" to formula,
+                    "administracion" to administration,
+                    "existencia" to stock
+                )
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.createProduct(body)
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CreatePaymentActivity, "Producto $name creado correctamente", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@CreatePaymentActivity, "Error al crear producto", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@CreatePaymentActivity, "Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                btnSave.isEnabled = true
+                btnSave.text = "CREAR PRODUCTO"
             }
         }
     }

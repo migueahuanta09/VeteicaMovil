@@ -81,4 +81,8 @@ interface ApiService {
 
     @GET("api/dashboard")
     suspend fun getDashboard(): Response<Map<String, Any>>
+
+    @PUT("api/services/{id}")
+    suspend fun updateService(@Path("id") id: String, @Body body: Map<String, String>): Response<Map<String, Any>>
+
 }

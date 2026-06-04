@@ -47,7 +47,6 @@ class AppointmentsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_appointments)
 
         prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
-
         initViews()
         setupToolbar()
         setupDrawerLayout()
@@ -73,33 +72,38 @@ class AppointmentsActivity : AppCompatActivity() {
     }
 
     private fun setupDrawerLayout() {
-        btnMenu.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
+        btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_home -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, HomeActivity::class.java)); finish() }
                 R.id.nav_pets -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PetsActivity::class.java)); finish() }
                 R.id.nav_owners -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, OwnersActivity::class.java)); finish() }
-                R.id.nav_appointments -> { drawerLayout.closeDrawer(GravityCompat.START) }
+                R.id.nav_appointments -> drawerLayout.closeDrawer(GravityCompat.START)
                 R.id.nav_payments -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PaymentsActivity::class.java)); finish() }
                 R.id.nav_profile -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, ProfileActivity::class.java)); finish() }
-                R.id.nav_logout -> { prefs.edit().remove("token").apply(); startActivity(Intent(this, LoginActivity::class.java)); finishAffinity() }
+                R.id.nav_logout -> { prefs.edit().clear().apply(); startActivity(Intent(this, LoginActivity::class.java)); finishAffinity() }
             }
             true
         }
 
         val headerView = navView.getHeaderView(0)
         val tvNavUserName: TextView = headerView.findViewById(R.id.tvNavUserName)
-        tvNavUserName.text = "Dra. María González"
+        tvNavUserName.text = prefs.getString("user_name", "Veterinario") ?: "Veterinario"
     }
 
     private fun setupRecyclerView() {
         adapter = AppointmentAdapter(appointmentsList) { appointment ->
             val intent = Intent(this, AppointmentDetailActivity::class.java)
             intent.putExtra("appointment_id", appointment.id)
+            intent.putExtra("appointment_mongo_id", appointment.mongoId)
             intent.putExtra("appointment_pet", appointment.petName)
+            intent.putExtra("appointment_owner", appointment.ownerName)
+            intent.putExtra("appointment_vet", appointment.veterinarian)
+            intent.putExtra("appointment_date", appointment.date)
+            intent.putExtra("appointment_time", appointment.time)
+            intent.putExtra("appointment_reason", appointment.reason)
+            intent.putExtra("appointment_status", appointment.status)
             startActivity(intent)
         }
         rvAppointments.layoutManager = LinearLayoutManager(this)
@@ -127,8 +131,10 @@ class AppointmentsActivity : AppCompatActivity() {
                     originalList.clear()
                     items?.forEach { item ->
                         val map = item as? Map<*, *> ?: return@forEach
+                        val mongoId = map["_id"] as? String ?: ""
                         originalList.add(Appointment(
-                            id = (map["_id"] as? String)?.hashCode() ?: 0,
+                            id = mongoId.hashCode(),
+                            mongoId = mongoId,
                             date = map["fecha"] as? String ?: "",
                             time = map["hora"] as? String ?: "",
                             petName = map["nombreMascota"] as? String ?: "",
@@ -154,9 +160,7 @@ class AppointmentsActivity : AppCompatActivity() {
         btnCreateAppointment.setOnClickListener {
             startActivity(Intent(this, CreateAppointmentActivity::class.java))
         }
-
         btnSearch.setOnClickListener { performSearch() }
-
         etSearch.setOnEditorActionListener { _, _, _ ->
             performSearch()
             true
@@ -177,6 +181,11 @@ class AppointmentsActivity : AppCompatActivity() {
             appointmentsList.addAll(filtered)
         }
         adapter.updateList(appointmentsList)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadAppointments()
     }
 
     override fun onBackPressed() {
