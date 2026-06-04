@@ -4,7 +4,6 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
-
     @POST("api/auth/login")
     suspend fun login(@Body body: Map<String, String>): Response<Map<String, Any>>
 
@@ -48,7 +47,7 @@ interface ApiService {
     suspend fun getAppointments(): Response<Map<String, Any>>
 
     @POST("api/appointments")
-    suspend fun createAppointment(@Body body: Map<String, Any>): Response<Map<String, Any>>
+    suspend fun createAppointment(@Body body: Map<String, String>): Response<Map<String, Any>>
 
     @PUT("api/appointments/{id}/complete")
     suspend fun completeAppointment(@Path("id") id: String): Response<Map<String, Any>>

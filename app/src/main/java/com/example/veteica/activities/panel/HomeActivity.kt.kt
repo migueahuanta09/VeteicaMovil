@@ -29,6 +29,7 @@ import com.example.veteica.adapters.AppointmentAdapter
 import com.example.veteica.models.Appointment
 import com.example.veteica.network.RetrofitClient
 import com.example.veteica.views.PieChartView
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
@@ -41,6 +42,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var tvUserName: TextView
     private lateinit var tvTotalPets: TextView
     private lateinit var tvTodayAppointments: TextView
+    private lateinit var tvOwnerLegend: TextView
+    private lateinit var tvSpeciesLegend: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +54,6 @@ class HomeActivity : AppCompatActivity() {
         setupToolbar()
         setupDrawerLayout()
         setupClickListeners()
-        setupPieCharts()
         loadDashboardData()
     }
 
@@ -63,6 +65,8 @@ class HomeActivity : AppCompatActivity() {
         tvUserName = findViewById(R.id.tvUserName)
         tvTotalPets = findViewById(R.id.tvTotalPets)
         tvTodayAppointments = findViewById(R.id.tvTodayAppointments)
+        tvOwnerLegend = findViewById(R.id.tvOwnerLegend)
+        tvSpeciesLegend = findViewById(R.id.tvSpeciesLegend)
     }
 
     private fun setupToolbar() {
@@ -76,13 +80,17 @@ class HomeActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_home -> { drawerLayout.closeDrawer(GravityCompat.START) }
+                R.id.nav_home -> drawerLayout.closeDrawer(GravityCompat.START)
                 R.id.nav_pets -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PetsActivity::class.java)) }
                 R.id.nav_owners -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, OwnersActivity::class.java)) }
                 R.id.nav_appointments -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, AppointmentsActivity::class.java)) }
                 R.id.nav_payments -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PaymentsActivity::class.java)) }
                 R.id.nav_profile -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, ProfileActivity::class.java)) }
-                R.id.nav_logout -> { prefs.edit().remove("token").apply(); startActivity(Intent(this, LoginActivity::class.java)); finishAffinity() }
+                R.id.nav_logout -> {
+                    prefs.edit().clear().apply()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finishAffinity()
+                }
             }
             true
         }
@@ -100,24 +108,72 @@ class HomeActivity : AppCompatActivity() {
             return
         }
 
-        val userName = prefs.getString("user_name", "Veterinario") ?: "Veterinario"
-        tvUserName.text = userName
+        tvUserName.text = prefs.getString("user_name", "Veterinario") ?: "Veterinario"
 
         lifecycleScope.launch {
-            loadPetsCount(token)
-            loadAppointments(token)
+            val petsDeferred = async { loadPetsData(token) }
+            val appointmentsDeferred = async { loadAppointments(token) }
+            petsDeferred.await()
+            appointmentsDeferred.await()
         }
     }
 
-    private suspend fun loadPetsCount(token: String) {
+    private suspend fun loadPetsData(token: String) {
         try {
             val api = RetrofitClient.instanceWithToken(token)
             val response = api.getPets()
             if (response.isSuccessful) {
                 val body = response.body()
                 val data = body?.get("data") as? Map<*, *>
-                val total = (data?.get("total") as? Double)?.toInt() ?: 0
+                val items = data?.get("items") as? List<*>
+                val total = items?.size ?: 0
                 tvTotalPets.text = total.toString()
+
+                val speciesCount = mutableMapOf<String, Int>()
+                val ownerCount = mutableMapOf<String, Int>()
+
+                items?.forEach { item ->
+                    val pet = item as? Map<*, *> ?: return@forEach
+                    val especie = (pet["especie"] as? String) ?: "Otro"
+                    val dueno = (pet["nombreDueno"] as? String) ?: "Sin dueño"
+                    speciesCount[especie] = (speciesCount[especie] ?: 0) + 1
+                    ownerCount[dueno] = (ownerCount[dueno] ?: 0) + 1
+                }
+
+                val speciesColors = listOf(
+                    "#4CAF50", "#FF9800", "#2196F3", "#E91E63", "#9C27B0", "#00BCD4"
+                )
+                val speciesPieData = speciesCount.entries.mapIndexed { index, entry ->
+                    val pct = entry.value.toFloat() / total * 100
+                    PieChartView.PieData(
+                        "${entry.key} (${entry.value})",
+                        pct,
+                        android.graphics.Color.parseColor(speciesColors[index % speciesColors.size])
+                    )
+                }
+                val pieChartPets = findViewById<PieChartView>(R.id.pieChartPets)
+                if (speciesPieData.isNotEmpty()) {
+                    pieChartPets.setData(speciesPieData)
+                }
+                tvSpeciesLegend.text = speciesCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
+
+                val ownerColors = listOf(
+                    "#4CAF50", "#FF9800", "#2196F3", "#E91E63", "#9C27B0",
+                    "#00BCD4", "#FF5722", "#607D8B", "#795548", "#CDDC39"
+                )
+                val ownerPieData = ownerCount.entries.mapIndexed { index, entry ->
+                    val pct = entry.value.toFloat() / total * 100
+                    PieChartView.PieData(
+                        "${entry.key} (${entry.value})",
+                        pct,
+                        android.graphics.Color.parseColor(ownerColors[index % ownerColors.size])
+                    )
+                }
+                val pieChartDiseases = findViewById<PieChartView>(R.id.pieChartDiseases)
+                if (ownerPieData.isNotEmpty()) {
+                    pieChartDiseases.setData(ownerPieData)
+                }
+                tvOwnerLegend.text = ownerCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
             }
         } catch (e: Exception) {
             tvTotalPets.text = "0"
@@ -146,8 +202,8 @@ class HomeActivity : AppCompatActivity() {
                     ))
                 }
 
-                val todayCount = appointments.count { it.status == "Pendiente" }
-                tvTodayAppointments.text = todayCount.toString()
+                val pendingCount = appointments.count { it.status == "Pendiente" }
+                tvTodayAppointments.text = pendingCount.toString()
 
                 val nextAppointments = appointments.take(3)
                 rvNextAppointments.layoutManager = LinearLayoutManager(this@HomeActivity)
@@ -180,26 +236,8 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, CreatePaymentActivity::class.java))
         }
         findViewById<MaterialButton>(R.id.btnOwner).setOnClickListener {
-
-            startActivity(Intent(this, CreateOwnerActivity::class.java))        }
-    }
-
-    private fun setupPieCharts() {
-        val pieChartDiseases = findViewById<PieChartView>(R.id.pieChartDiseases)
-        val diseasesData = listOf(
-            PieChartView.PieData("Infecciones", 45f, android.graphics.Color.parseColor("#4CAF50")),
-            PieChartView.PieData("Respiratorias", 30f, android.graphics.Color.parseColor("#FF9800")),
-            PieChartView.PieData("Digestivas", 25f, android.graphics.Color.parseColor("#F44336"))
-        )
-        pieChartDiseases.setData(diseasesData)
-
-        val pieChartPets = findViewById<PieChartView>(R.id.pieChartPets)
-        val petsData = listOf(
-            PieChartView.PieData("Perros", 60f, android.graphics.Color.parseColor("#4CAF50")),
-            PieChartView.PieData("Gatos", 25f, android.graphics.Color.parseColor("#FF9800")),
-            PieChartView.PieData("Otros", 15f, android.graphics.Color.parseColor("#2196F3"))
-        )
-        pieChartPets.setData(petsData)
+            startActivity(Intent(this, CreateOwnerActivity::class.java))
+        }
     }
 
     override fun onBackPressed() {
