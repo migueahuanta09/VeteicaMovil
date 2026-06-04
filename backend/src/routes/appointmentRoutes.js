@@ -8,11 +8,14 @@ const {
 } = require('../controllers/appointmentController');
 
 router.get('/',    proteger, obtenerAppointments);
-router.get('/:id', proteger, obtenerAppointment);
 router.post('/',   proteger, crearAppointment);
-router.put('/:id', proteger, actualizarAppointment);
-router.delete('/:id', proteger, eliminarAppointment);
+
+// Estas van ANTES de /:id para que no sean capturadas por ella
 router.put('/:id/complete', proteger, completarAppointment);
 router.put('/:id/cancel',   proteger, cancelarAppointment);
+
+router.get('/:id', proteger, obtenerAppointment);
+router.put('/:id', proteger, actualizarAppointment);
+router.delete('/:id', proteger, eliminarAppointment);
 
 module.exports = router;
