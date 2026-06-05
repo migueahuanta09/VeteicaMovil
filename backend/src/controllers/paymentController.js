@@ -3,7 +3,7 @@ const PendingPayment = require('../models/PendingPayment');
 // GET /api/payments/pending
 const obtenerPendientes = async (req, res) => {
   try {
-    const items = await PendingPayment.find({ estado: 'Pendiente' });
+    const items = await PendingPayment.find({ estado: 'Pendiente' }).sort({ createdAt: -1 });
     res.json({ success: true, data: { items, total: items.length } });
   } catch (error) {
     res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
@@ -19,7 +19,7 @@ const cobrar = async (req, res) => {
         estado:      'Cobrado',
         metodoPago:  req.body.metodoPago,
         montoPagado: req.body.montoPagado,
-        fechaCobro:  new Date().toISOString().split('T')[0], // fecha de hoy yyyy-MM-dd
+        fechaCobro:  new Date().toISOString().split('T')[0],
       },
       { new: true }
     );
@@ -29,7 +29,7 @@ const cobrar = async (req, res) => {
       success: true,
       data: {
         ...cobro.toObject(),
-        ticketUrl: `http://localhost:3000/api/payments/${cobro._id}/ticket`,
+        ticketUrl: `/api/payments/${cobro._id}/ticket`,
       },
       message: 'Cobro realizado exitosamente',
     });
@@ -44,17 +44,16 @@ const generarTicket = async (req, res) => {
     const cobro = await PendingPayment.findById(req.params.id);
     if (!cobro) return res.status(404).json({ success: false, error: { code: 'PAY_001', message: 'Cobro no encontrado' } });
 
-    // Por ahora devolvemos JSON — el PDF lo haremos en una etapa posterior
     res.json({
       success: true,
       data: {
-        clinica:       'VETEICA CLINIC',
-        mascota:       cobro.nombreMascota,
-        servicio:      cobro.nombreServicio,
-        fecha:         cobro.fecha,
-        monto:         cobro.montoPagado,
-        metodoPago:    cobro.metodoPago,
-        folio:         cobro._id,
+        clinica:    'VETEICA CLINIC',
+        mascota:    cobro.nombreMascota,
+        servicio:   cobro.nombreServicio,
+        fecha:      cobro.fecha,
+        monto:      cobro.montoPagado,
+        metodoPago: cobro.metodoPago,
+        folio:      cobro._id,
       },
     });
   } catch (error) {

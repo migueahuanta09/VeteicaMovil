@@ -131,6 +131,11 @@ class AppointmentsActivity : AppCompatActivity() {
                     originalList.clear()
                     items?.forEach { item ->
                         val map = item as? Map<*, *> ?: return@forEach
+                        val status = map["estado"] as? String ?: "Pendiente"
+
+                        // ✅ Solo mostrar citas activas — excluir Completadas y Canceladas
+                        if (status == "Completada" || status == "Cancelada") return@forEach
+
                         val mongoId = map["_id"] as? String ?: ""
                         originalList.add(Appointment(
                             id = mongoId.hashCode(),
@@ -141,7 +146,7 @@ class AppointmentsActivity : AppCompatActivity() {
                             ownerName = map["nombreDueno"] as? String ?: "",
                             veterinarian = map["veterinario"] as? String ?: "",
                             reason = map["motivo"] as? String ?: "",
-                            status = map["estado"] as? String ?: "Pendiente"
+                            status = status
                         ))
                     }
                     appointmentsList.clear()

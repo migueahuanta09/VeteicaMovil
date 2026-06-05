@@ -1,7 +1,6 @@
 const Appointment    = require('../models/Appointment');
 const PendingPayment = require('../models/PendingPayment');
 
-// GET /api/appointments
 const obtenerAppointments = async (req, res) => {
   try {
     const items = await Appointment.find();
@@ -11,7 +10,6 @@ const obtenerAppointments = async (req, res) => {
   }
 };
 
-// GET /api/appointments/:id
 const obtenerAppointment = async (req, res) => {
   try {
     const appt = await Appointment.findById(req.params.id);
@@ -22,7 +20,6 @@ const obtenerAppointment = async (req, res) => {
   }
 };
 
-// POST /api/appointments
 const crearAppointment = async (req, res) => {
   try {
     const appt = new Appointment(req.body);
@@ -33,7 +30,6 @@ const crearAppointment = async (req, res) => {
   }
 };
 
-// PUT /api/appointments/:id
 const actualizarAppointment = async (req, res) => {
   try {
     const appt = await Appointment.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -44,7 +40,6 @@ const actualizarAppointment = async (req, res) => {
   }
 };
 
-// DELETE /api/appointments/:id
 const eliminarAppointment = async (req, res) => {
   try {
     const appt = await Appointment.findByIdAndDelete(req.params.id);
@@ -55,7 +50,6 @@ const eliminarAppointment = async (req, res) => {
   }
 };
 
-// PUT /api/appointments/:id/complete
 const completarAppointment = async (req, res) => {
   try {
     const appt = await Appointment.findByIdAndUpdate(
@@ -65,11 +59,13 @@ const completarAppointment = async (req, res) => {
     );
     if (!appt) return res.status(404).json({ success: false, error: { code: 'APPT_001', message: 'Cita no encontrada' } });
 
-    // Crear cobro pendiente automáticamente
+    const nombreMascota = appt.nombreMascota || 'Sin nombre';
+    const fecha = appt.fecha || new Date().toISOString().split('T')[0];
+
     const cobro = new PendingPayment({
-      nombreMascota:  appt.nombreMascota,
-      nombreServicio: 'Consulta general',
-      fecha:          appt.fecha,
+      nombreMascota,
+      nombreServicio: appt.motivo || 'Consulta general',
+      fecha,
       total:          500,
       appointmentId:  appt._id,
     });
@@ -81,11 +77,11 @@ const completarAppointment = async (req, res) => {
       message: 'Cita completada y cobro generado',
     });
   } catch (error) {
+    console.error('ERROR completarAppointment:', error.message);
     res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
   }
 };
 
-// PUT /api/appointments/:id/cancel
 const cancelarAppointment = async (req, res) => {
   try {
     const appt = await Appointment.findByIdAndUpdate(req.params.id, { estado: 'Cancelada' }, { new: true });
