@@ -34,11 +34,17 @@ interface ApiService {
     @GET("api/owners")
     suspend fun getOwners(): Response<Map<String, Any>>
 
+    @GET("api/owners/{id}")
+    suspend fun getOwner(@Path("id") id: String): Response<Map<String, Any>>
+
     @POST("api/owners")
     suspend fun createOwner(@Body body: Map<String, String>): Response<Map<String, Any>>
 
     @PUT("api/owners/{id}")
     suspend fun updateOwner(@Path("id") id: String, @Body body: Map<String, String>): Response<Map<String, Any>>
+
+    @PUT("api/owners/{id}")
+    suspend fun updateOwnerFull(@Path("id") id: String, @Body body: Map<String, @JvmSuppressWildcards Any>): Response<Map<String, Any>>
 
     @DELETE("api/owners/{id}")
     suspend fun deleteOwner(@Path("id") id: String): Response<Map<String, Any>>

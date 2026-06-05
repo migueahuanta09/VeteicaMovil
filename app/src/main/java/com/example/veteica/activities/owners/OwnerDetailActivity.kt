@@ -15,6 +15,7 @@ import com.example.veteica.adapters.OwnerPetAdapter
 import com.example.veteica.models.OwnerAppointment
 import com.example.veteica.models.Pet
 import com.example.veteica.network.RetrofitClient
+import com.example.veteica.utils.PdfGenerator
 import kotlinx.coroutines.launch
 
 class OwnerDetailActivity : AppCompatActivity() {
@@ -36,6 +37,7 @@ class OwnerDetailActivity : AppCompatActivity() {
     private var ownerPhone: String = ""
     private var ownerEmail: String = ""
     private var ownerAddress: String = ""
+    private var petsListData = mutableListOf<Pair<String, String>>() // (nombre, especie)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,38 +88,41 @@ class OwnerDetailActivity : AppCompatActivity() {
     }
 
     private fun loadPetsFromBackend() {
+        if (ownerMongoId.isEmpty()) return
         val token = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
             .getString("token", "") ?: ""
 
         lifecycleScope.launch {
             try {
                 val api = RetrofitClient.instanceWithToken(token)
-                val response = api.getPets()
+                val response = api.getOwner(ownerMongoId)
 
                 if (response.isSuccessful) {
-                    val body = response.body()
-                    val data = body?.get("data") as? Map<*, *>
-                    val items = data?.get("items") as? List<*>
+                    val data = response.body()?.get("data") as? Map<*, *>
+                    val mascotasList = data?.get("mascotas") as? List<*>
 
+                    petsListData.clear()
                     val petsList = mutableListOf<Pet>()
-                    items?.forEachIndexed { index, item ->
+
+                    mascotasList?.forEachIndexed { index, item ->
                         val pet = item as? Map<*, *> ?: return@forEachIndexed
-                        val dueno = pet["nombreDueno"] as? String ?: ""
-                        if (dueno.equals(ownerName, ignoreCase = true)) {
-                            petsList.add(Pet(
-                                id = index + 1,
-                                mongoId = pet["_id"] as? String ?: "",
-                                name = pet["nombre"] as? String ?: "",
-                                species = pet["especie"] as? String ?: "",
-                                breed = pet["raza"] as? String ?: "",
-                                age = (pet["edad"] as? Double)?.toInt() ?: 0,
-                                weight = pet["peso"] as? Double ?: 0.0,
-                                gender = pet["genero"] as? String ?: "",
-                                color = pet["color"] as? String ?: "",
-                                ownerName = dueno,
-                                notes = pet["notas"] as? String ?: ""
-                            ))
-                        }
+                        val petName = pet["nombre"] as? String ?: ""
+                        val petSpecies = pet["especie"] as? String ?: ""
+
+                        petsListData.add(Pair(petName, petSpecies))
+                        petsList.add(Pet(
+                            id = index + 1,
+                            mongoId = pet["_id"] as? String ?: "",
+                            name = petName,
+                            species = petSpecies,
+                            breed = "",
+                            age = 0,
+                            weight = 0.0,
+                            gender = "",
+                            color = "",
+                            ownerName = ownerName,
+                            notes = ""
+                        ))
                     }
 
                     rvPets.layoutManager = LinearLayoutManager(this@OwnerDetailActivity)
@@ -144,6 +149,11 @@ class OwnerDetailActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadPetsFromBackend()
+    }
+
     private fun setupClickListeners() {
         btnBack.setOnClickListener { finish() }
 
@@ -158,11 +168,44 @@ class OwnerDetailActivity : AppCompatActivity() {
         }
 
         btnDownloadFicha.setOnClickListener {
-            Toast.makeText(this, "Descargando ficha PDF...", Toast.LENGTH_SHORT).show()
+            if (petsListData.isEmpty()) {
+                Toast.makeText(this, "No hay mascotas asociadas para generar la ficha", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            PdfGenerator.generateOwnerFicha(
+                this,
+                ownerName,
+                ownerPhone,
+                ownerEmail,
+                ownerAddress,
+                petsListData
+            )
         }
 
         btnGenerarCarnet.setOnClickListener {
-            Toast.makeText(this, "Generando carnet veterinario PDF...", Toast.LENGTH_SHORT).show()
+            if (petsListData.isEmpty()) {
+                Toast.makeText(this, "No hay mascotas asociadas para generar el carnet", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Mostrar diálogo para seleccionar qué mascota
+            val petNames = petsListData.map { it.first }.toTypedArray()
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Seleccionar mascota")
+                .setItems(petNames) { _, which ->
+                    val selectedPet = petsListData[which]
+                    // Por ahora usamos datos mock, después se pueden obtener del backend
+                    PdfGenerator.generateCarnetVeterinario(
+                        this,
+                        ownerName,
+                        selectedPet.first,
+                        selectedPet.second,
+                        "Raza no especificada",
+                        "Color no especificado"
+                    )
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
     }
 }

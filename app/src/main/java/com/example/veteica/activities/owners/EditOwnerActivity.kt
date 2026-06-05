@@ -128,8 +128,31 @@ class EditOwnerActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val api = RetrofitClient.instanceWithToken(token)
-                val response = api.getPets()
 
+                // Cargar mascotas actuales del dueño
+                if (ownerId.isNotEmpty()) {
+                    val ownerResponse = api.getOwner(ownerId)
+                    if (ownerResponse.isSuccessful) {
+                        val ownerData = ownerResponse.body()?.get("data") as? Map<*, *>
+                        val mascotasList = ownerData?.get("mascotas") as? List<*>
+                        associatedPets.clear()
+                        mascotasList?.forEachIndexed { index, item ->
+                            val pet = item as? Map<*, *> ?: return@forEachIndexed
+                            associatedPets.add(Pet(
+                                id = index + 1,
+                                mongoId = pet["_id"] as? String ?: "",
+                                name = pet["nombre"] as? String ?: "",
+                                species = pet["especie"] as? String ?: "",
+                                breed = "", age = 0, weight = 0.0, gender = "",
+                                color = "", ownerName = "", notes = ""
+                            ))
+                        }
+                        petAdapter.updateList(associatedPets)
+                    }
+                }
+
+                // Cargar todas las mascotas disponibles para el selector
+                val response = api.getPets()
                 if (response.isSuccessful) {
                     val body = response.body()
                     val data = body?.get("data") as? Map<*, *>
@@ -296,14 +319,16 @@ class EditOwnerActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val body = mapOf(
+                val petIds = associatedPets.map { it.mongoId }
+                val body: Map<String, Any> = mapOf(
                     "nombre" to name,
                     "telefono" to phone,
                     "email" to email,
-                    "direccion" to address
+                    "direccion" to address,
+                    "mascotaIds" to petIds
                 )
                 val api = RetrofitClient.instanceWithToken(token)
-                val response = api.updateOwner(ownerId, body)
+                val response = api.updateOwnerFull(ownerId, body)
 
                 if (response.isSuccessful) {
                     Toast.makeText(this@EditOwnerActivity, "Dueño actualizado correctamente", Toast.LENGTH_SHORT).show()

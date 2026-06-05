@@ -45,11 +45,38 @@ const crearOwner = async (req, res) => {
 // PUT /api/owners/:id
 const actualizarOwner = async (req, res) => {
   try {
-    const owner = await Owner.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const mongoose = require('mongoose');
+    const { mascotaIds, ...ownerFields } = req.body;
+
+    const owner = await Owner.findByIdAndUpdate(req.params.id, ownerFields, { new: true, runValidators: true });
     if (!owner) {
       return res.status(404).json({ success: false, error: { code: 'OWNER_001', message: 'Dueño no encontrado' } });
     }
-    res.json({ success: true, data: owner, message: 'Dueño actualizado' });
+
+    // Si se envía mascotaIds, sincronizamos las vinculaciones
+    if (Array.isArray(mascotaIds)) {
+      // Convertir strings a ObjectId para que Mongoose los compare correctamente
+      const petObjectIds = mascotaIds
+        .filter(id => mongoose.Types.ObjectId.isValid(id))
+        .map(id => new mongoose.Types.ObjectId(id));
+
+      // Quitar el ownerId a mascotas que ya no están en la lista
+      await Pet.updateMany(
+        { ownerId: owner._id, _id: { $nin: petObjectIds } },
+        { $unset: { ownerId: '' }, $set: { nombreDueno: '' } }
+      );
+
+      // Asignar el ownerId a las mascotas seleccionadas
+      if (petObjectIds.length > 0) {
+        await Pet.updateMany(
+          { _id: { $in: petObjectIds } },
+          { $set: { ownerId: owner._id, nombreDueno: owner.nombre } }
+        );
+      }
+    }
+
+    const mascotas = await Pet.find({ ownerId: owner._id }).select('nombre especie');
+    res.json({ success: true, data: { ...owner.toObject(), mascotas }, message: 'Dueño actualizado' });
   } catch (error) {
     res.status(422).json({ success: false, error: { code: 'OWNER_001', message: error.message } });
   }

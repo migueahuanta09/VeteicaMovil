@@ -17,12 +17,15 @@ import com.example.veteica.adapters.VacunaAdapter
 import com.example.veteica.models.Historial
 import com.example.veteica.models.Vacuna
 import com.example.veteica.network.RetrofitClient
+import com.example.veteica.utils.PdfGeneratorPet
 import kotlinx.coroutines.launch
 
 class PetDetailActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
     private lateinit var btnEdit: TextView
+    private lateinit var btnExportPdf: com.google.android.material.button.MaterialButton
+    private lateinit var ivPetPhoto: ImageView
     private lateinit var tvPetName: TextView
     private lateinit var tvSpecies: TextView
     private lateinit var tvBreed: TextView
@@ -40,11 +43,14 @@ class PetDetailActivity : AppCompatActivity() {
     private var petSpecies: String = ""
     private var petBreed: String = ""
     private var petAge: Int = 0
-    private var petWeight: Double = 0.0
     private var petGender: String = ""
-    private var petColor: String = ""
     private var petOwnerName: String = ""
+    private var petWeight: Double = 0.0
+    private var petColor: String = ""
     private var petNotes: String = ""
+
+    private var historialList = mutableListOf<Historial>()
+    private var vacunasList = mutableListOf<Vacuna>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +66,8 @@ class PetDetailActivity : AppCompatActivity() {
     private fun initViews() {
         btnBack = findViewById(R.id.btnBack)
         btnEdit = findViewById(R.id.btnEdit)
+        btnExportPdf = findViewById(R.id.btnExportPdf)
+        ivPetPhoto = findViewById(R.id.ivPetPhoto)
         tvPetName = findViewById(R.id.tvPetName)
         tvSpecies = findViewById(R.id.tvSpecies)
         tvBreed = findViewById(R.id.tvBreed)
@@ -81,27 +89,77 @@ class PetDetailActivity : AppCompatActivity() {
     private fun loadPetData() {
         petMongoId = intent.getStringExtra("pet_mongo_id") ?: ""
         petName = intent.getStringExtra("pet_name") ?: ""
-        petSpecies = intent.getStringExtra("pet_species") ?: ""
-        petBreed = intent.getStringExtra("pet_breed") ?: ""
-        petAge = intent.getIntExtra("pet_age", 0)
-        petWeight = intent.getDoubleExtra("pet_weight", 0.0)
-        petGender = intent.getStringExtra("pet_gender") ?: ""
-        petColor = intent.getStringExtra("pet_color") ?: ""
-        petOwnerName = intent.getStringExtra("pet_owner_name") ?: ""
-        petNotes = intent.getStringExtra("pet_notes") ?: ""
 
         tvPetName.text = petName
-        tvSpecies.text = petSpecies
-        tvBreed.text = petBreed
-        tvAge.text = "$petAge años"
-        tvGender.text = petGender
-        tvOwnerName.text = petOwnerName
-        tvOwnerPhone.text = ""
-        tvOwnerAddress.text = ""
 
         if (petMongoId.isNotEmpty()) {
+            loadPetFromApi()
             loadHistorial()
             loadVacunas()
+        } else {
+            tvSpecies.text = intent.getStringExtra("pet_species") ?: "No especificado"
+            tvBreed.text = intent.getStringExtra("pet_breed") ?: "No especificado"
+            tvAge.text = "${intent.getIntExtra("pet_age", 0)} años"
+            tvGender.text = intent.getStringExtra("pet_gender") ?: "No especificado"
+            tvOwnerName.text = intent.getStringExtra("pet_owner_name") ?: "No especificado"
+
+            petSpecies = tvSpecies.text.toString()
+            petBreed = tvBreed.text.toString()
+            petAge = intent.getIntExtra("pet_age", 0)
+            petGender = tvGender.text.toString()
+            petOwnerName = tvOwnerName.text.toString()
+            petWeight = intent.getDoubleExtra("pet_weight", 0.0)
+            petColor = intent.getStringExtra("pet_color") ?: ""
+            petNotes = intent.getStringExtra("pet_notes") ?: ""
+        }
+    }
+
+    private fun loadPetFromApi() {
+        val token = prefs.getString("token", "") ?: ""
+        if (token.isEmpty()) {
+            Toast.makeText(this, "Sesión no válida", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val response = api.getPet(petMongoId)
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val success = body?.get("success") as? Boolean ?: false
+
+                    if (success) {
+                        val data = body?.get("data") as? Map<*, *>
+                        if (data != null) {
+                            petName = data["nombre"] as? String ?: petName
+                            petSpecies = data["especie"] as? String ?: "No especificado"
+                            petBreed = data["raza"] as? String ?: "No especificado"
+                            petAge = (data["edad"] as? Number)?.toInt() ?: 0
+                            petGender = data["genero"] as? String ?: "No especificado"
+                            petOwnerName = data["nombreDueno"] as? String ?: "No especificado"
+                            petWeight = (data["peso"] as? Number)?.toDouble() ?: 0.0
+                            petColor = data["color"] as? String ?: ""
+                            petNotes = data["notas"] as? String ?: ""
+
+                            tvPetName.text = petName
+                            tvSpecies.text = petSpecies
+                            tvBreed.text = petBreed
+                            tvAge.text = "$petAge años"
+                            tvGender.text = petGender
+                            tvOwnerName.text = petOwnerName
+                        }
+                    } else {
+                        val message = body?.get("message") as? String ?: "Error al cargar datos"
+                        Toast.makeText(this@PetDetailActivity, message, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@PetDetailActivity, "Error de conexión: ${response.code()}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@PetDetailActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -113,26 +171,29 @@ class PetDetailActivity : AppCompatActivity() {
                 val response = api.getMedicalHistory(petMongoId)
                 if (response.isSuccessful) {
                     val body = response.body()
-                    val data = body?.get("data") as? Map<*, *>
-                    val items = data?.get("historialClinico") as? List<*>
-                    val historialList = mutableListOf<Historial>()
-                    items?.forEachIndexed { index, item ->
-                        val map = item as? Map<*, *> ?: return@forEachIndexed
-                        historialList.add(Historial(
-                            id = index + 1,
-                            consulta = map["consulta"] as? String ?: "",
-                            fecha = map["fecha"] as? String ?: "",
-                            diagnostico = map["diagnostico"] as? String ?: "",
-                            veterinario = map["veterinario"] as? String ?: ""
-                        ))
-                    }
-                    rvHistorialClinico.layoutManager = LinearLayoutManager(this@PetDetailActivity)
-                    rvHistorialClinico.adapter = HistorialAdapter(historialList) { historial ->
-                        Toast.makeText(this@PetDetailActivity, "Consulta: ${historial.consulta}", Toast.LENGTH_SHORT).show()
+                    val success = body?.get("success") as? Boolean ?: false
+                    if (success) {
+                        val data = body?.get("data") as? Map<*, *>
+                        val items = data?.get("historialClinico") as? List<*>
+                        historialList.clear()
+                        items?.forEachIndexed { index, item ->
+                            val map = item as? Map<*, *> ?: return@forEachIndexed
+                            historialList.add(Historial(
+                                id = index + 1,
+                                consulta = map["consulta"] as? String ?: "",
+                                fecha = map["fecha"] as? String ?: "",
+                                diagnostico = map["diagnostico"] as? String ?: "",
+                                veterinario = map["veterinario"] as? String ?: ""
+                            ))
+                        }
+                        rvHistorialClinico.layoutManager = LinearLayoutManager(this@PetDetailActivity)
+                        rvHistorialClinico.adapter = HistorialAdapter(historialList) { historial ->
+                            Toast.makeText(this@PetDetailActivity, "Consulta: ${historial.consulta}", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PetDetailActivity, "Error cargando historial", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PetDetailActivity, "Error cargando historial: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -145,25 +206,28 @@ class PetDetailActivity : AppCompatActivity() {
                 val response = api.getVaccines(petMongoId)
                 if (response.isSuccessful) {
                     val body = response.body()
-                    val data = body?.get("data") as? Map<*, *>
-                    val items = data?.get("vacunas") as? List<*>
-                    val vacunasList = mutableListOf<Vacuna>()
-                    items?.forEachIndexed { index, item ->
-                        val map = item as? Map<*, *> ?: return@forEachIndexed
-                        vacunasList.add(Vacuna(
-                            id = index + 1,
-                            nombre = map["nombre"] as? String ?: "",
-                            cantidad = map["cantidad"] as? String ?: "",
-                            fecha = map["fecha"] as? String ?: ""
-                        ))
-                    }
-                    rvVacunas.layoutManager = LinearLayoutManager(this@PetDetailActivity)
-                    rvVacunas.adapter = VacunaAdapter(vacunasList) { vacuna ->
-                        Toast.makeText(this@PetDetailActivity, "Vacuna: ${vacuna.nombre}", Toast.LENGTH_SHORT).show()
+                    val success = body?.get("success") as? Boolean ?: false
+                    if (success) {
+                        val data = body?.get("data") as? Map<*, *>
+                        val items = data?.get("vacunas") as? List<*>
+                        vacunasList.clear()
+                        items?.forEachIndexed { index, item ->
+                            val map = item as? Map<*, *> ?: return@forEachIndexed
+                            vacunasList.add(Vacuna(
+                                id = index + 1,
+                                nombre = map["nombre"] as? String ?: "",
+                                cantidad = map["cantidad"] as? String ?: "",
+                                fecha = map["fecha"] as? String ?: ""
+                            ))
+                        }
+                        rvVacunas.layoutManager = LinearLayoutManager(this@PetDetailActivity)
+                        rvVacunas.adapter = VacunaAdapter(vacunasList) { vacuna ->
+                            Toast.makeText(this@PetDetailActivity, "Vacuna: ${vacuna.nombre}", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PetDetailActivity, "Error cargando vacunas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PetDetailActivity, "Error cargando vacunas: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -173,17 +237,25 @@ class PetDetailActivity : AppCompatActivity() {
 
         btnEdit.setOnClickListener {
             val editIntent = Intent(this, EditPetActivity::class.java)
-            editIntent.putExtra("pet_mongo_id", petMongoId)
-            editIntent.putExtra("pet_name", petName)
-            editIntent.putExtra("pet_species", petSpecies)
-            editIntent.putExtra("pet_breed", petBreed)
-            editIntent.putExtra("pet_age", petAge)
-            editIntent.putExtra("pet_weight", petWeight)
-            editIntent.putExtra("pet_gender", petGender)
-            editIntent.putExtra("pet_color", petColor)
-            editIntent.putExtra("pet_owner_name", petOwnerName)
-            editIntent.putExtra("pet_notes", petNotes)
+            editIntent.putExtra("pet_id", petMongoId)
             startActivity(editIntent)
+        }
+
+        btnExportPdf.setOnClickListener {
+            PdfGeneratorPet.generatePetMedicalRecord(
+                context = this,
+                petName = petName,
+                petSpecies = petSpecies,
+                petBreed = petBreed,
+                petAge = petAge,
+                petGender = petGender,
+                petWeight = petWeight,
+                petColor = petColor,
+                petOwnerName = petOwnerName,
+                petNotes = petNotes,
+                historialList = historialList,
+                vacunasList = vacunasList
+            )
         }
     }
 }

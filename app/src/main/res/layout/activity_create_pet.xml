@@ -43,7 +43,6 @@
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
-
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -143,7 +142,7 @@
                         android:padding="8dp"
                         android:layout_marginBottom="16dp"/>
 
-                    <!-- Raza -->
+                    <!-- Raza (SPINNER) -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -152,15 +151,12 @@
                         android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <EditText
-                        android:id="@+id/etBreed"
+                    <Spinner
+                        android:id="@+id/spinnerBreed"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Raza"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
+                        android:layout_height="48dp"
                         android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
+                        android:padding="8dp"
                         android:layout_marginBottom="16dp"/>
 
                     <!-- Edad y Peso -->
@@ -254,15 +250,12 @@
                         android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <EditText
-                        android:id="@+id/etColor"
+                    <Spinner
+                        android:id="@+id/spinnerColor"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Color"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
+                        android:layout_height="48dp"
                         android:background="@drawable/bg_edit_text"
-                        android:padding="12dp"
+                        android:padding="8dp"
                         android:layout_marginBottom="16dp"/>
 
                     <!-- Dueño -->
@@ -274,16 +267,29 @@
                         android:textColor="#999999"
                         android:layout_marginBottom="4dp"/>
 
-                    <EditText
-                        android:id="@+id/etOwnerName"
+                    <TextView
+                        android:id="@+id/tvOwnerSelected"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nombre del dueño"
+                        android:text="Ningún dueño seleccionado"
                         android:textSize="14sp"
-                        android:textColor="#333333"
+                        android:textColor="#777777"
                         android:background="@drawable/bg_edit_text"
                         android:padding="12dp"
-                        android:layout_marginBottom="16dp"/>
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectOwner"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:text="Seleccionar Dueño"
+                        android:textSize="13sp"
+                        app:cornerRadius="8dp"
+                        android:backgroundTint="#0c607d"
+                        android:layout_marginBottom="16dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="#0c607d"
+                        android:textColor="#0c607d"/>
 
                     <!-- Notas -->
                     <TextView

@@ -24,7 +24,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Botón volver -->
                 <ImageButton
                     android:id="@+id/btnBack"
                     android:layout_width="48dp"
@@ -34,7 +33,6 @@
                     android:tint="@android:color/white"
                     android:contentDescription="Volver"/>
 
-                <!-- Título con nombre del perro -->
                 <TextView
                     android:id="@+id/tvPetName"
                     android:layout_width="0dp"
@@ -46,7 +44,6 @@
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"/>
 
-                <!-- Botón Editar -->
                 <TextView
                     android:id="@+id/btnEdit"
                     android:layout_width="wrap_content"
@@ -67,7 +64,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Foto del perro (logo temporal) -->
+            <!-- Foto del perro -->
             <androidx.cardview.widget.CardView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
@@ -243,7 +240,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Encabezados -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
@@ -290,7 +286,6 @@
 
                     </LinearLayout>
 
-                    <!-- RecyclerView para el historial clínico -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvHistorialClinico"
                         android:layout_width="match_parent"
@@ -324,7 +319,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Encabezados -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
@@ -362,7 +356,6 @@
 
                     </LinearLayout>
 
-                    <!-- RecyclerView para las vacunas -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvVacunas"
                         android:layout_width="match_parent"
@@ -485,6 +478,22 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+            <!-- Botón Exportar PDF -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExportPdf"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Exportar PDF"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                android:backgroundTint="#2196F3"
+                app:icon="@drawable/ic_pdf"
+                app:iconGravity="textStart"/>
 
         </LinearLayout>
 
