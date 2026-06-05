@@ -1,64 +1,95 @@
+const Appointment    = require('../models/Appointment');
 const PendingPayment = require('../models/PendingPayment');
 
-// GET /api/payments/pending
-const obtenerPendientes = async (req, res) => {
+const obtenerAppointments = async (req, res) => {
   try {
-    const items = await PendingPayment.find({ estado: 'Pendiente' }).sort({ createdAt: -1 });
+    const items = await Appointment.find();
     res.json({ success: true, data: { items, total: items.length } });
   } catch (error) {
     res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
   }
 };
 
-// POST /api/payments/:id/charge
-const cobrar = async (req, res) => {
+const obtenerAppointment = async (req, res) => {
   try {
-    const cobro = await PendingPayment.findByIdAndUpdate(
-      req.params.id,
-      {
-        estado:      'Cobrado',
-        metodoPago:  req.body.metodoPago,
-        montoPagado: req.body.montoPagado,
-        fechaCobro:  new Date().toISOString().split('T')[0],
-      },
-      { new: true }
-    );
-    if (!cobro) return res.status(404).json({ success: false, error: { code: 'PAY_001', message: 'Cobro no encontrado' } });
-
-    res.json({
-      success: true,
-      data: {
-        ...cobro.toObject(),
-        ticketUrl: `/api/payments/${cobro._id}/ticket`,
-      },
-      message: 'Cobro realizado exitosamente',
-    });
-  } catch (error) {
-    res.status(422).json({ success: false, error: { code: 'PAY_002', message: error.message } });
-  }
-};
-
-// GET /api/payments/:id/ticket
-const generarTicket = async (req, res) => {
-  try {
-    const cobro = await PendingPayment.findById(req.params.id);
-    if (!cobro) return res.status(404).json({ success: false, error: { code: 'PAY_001', message: 'Cobro no encontrado' } });
-
-    res.json({
-      success: true,
-      data: {
-        clinica:    'VETEICA CLINIC',
-        mascota:    cobro.nombreMascota,
-        servicio:   cobro.nombreServicio,
-        fecha:      cobro.fecha,
-        monto:      cobro.montoPagado,
-        metodoPago: cobro.metodoPago,
-        folio:      cobro._id,
-      },
-    });
+    const appt = await Appointment.findById(req.params.id);
+    if (!appt) return res.status(404).json({ success: false, error: { code: 'APPT_001', message: 'Cita no encontrada' } });
+    res.json({ success: true, data: appt });
   } catch (error) {
     res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
   }
 };
 
-module.exports = { obtenerPendientes, cobrar, generarTicket };
+const crearAppointment = async (req, res) => {
+  try {
+    const appt = new Appointment(req.body);
+    const guardado = await appt.save();
+    res.status(201).json({ success: true, data: guardado, message: 'Cita creada' });
+  } catch (error) {
+    res.status(422).json({ success: false, error: { code: 'APPT_001', message: error.message } });
+  }
+};
+
+const actualizarAppointment = async (req, res) => {
+  try {
+    const appt = await Appointment.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!appt) return res.status(404).json({ success: false, error: { code: 'APPT_001', message: 'Cita no encontrada' } });
+    res.json({ success: true, data: appt, message: 'Cita actualizada' });
+  } catch (error) {
+    res.status(422).json({ success: false, error: { code: 'APPT_001', message: error.message } });
+  }
+};
+
+const eliminarAppointment = async (req, res) => {
+  try {
+    const appt = await Appointment.findByIdAndDelete(req.params.id);
+    if (!appt) return res.status(404).json({ success: false, error: { code: 'APPT_001', message: 'Cita no encontrada' } });
+    res.json({ success: true, message: 'Cita eliminada' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
+  }
+};
+
+const completarAppointment = async (req, res) => {
+  try {
+    const appt = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { estado: 'Completada', diagnostico: req.body.diagnostico },
+      { new: true }
+    );
+    if (!appt) return res.status(404).json({ success: false, error: { code: 'APPT_001', message: 'Cita no encontrada' } });
+
+    const nombreMascota = appt.nombreMascota || 'Sin nombre';
+    const fecha = appt.fecha || new Date().toISOString().split('T')[0];
+
+    const cobro = new PendingPayment({
+      nombreMascota,
+      nombreServicio: appt.motivo || 'Consulta general',
+      fecha,
+      total:          500,
+      appointmentId:  appt._id,
+    });
+    const cobroGuardado = await cobro.save();
+
+    res.json({
+      success: true,
+      data: { cita: appt, cobroPendiente: cobroGuardado },
+      message: 'Cita completada y cobro generado',
+    });
+  } catch (error) {
+    console.error('ERROR completarAppointment:', error.message);
+    res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
+  }
+};
+
+const cancelarAppointment = async (req, res) => {
+  try {
+    const appt = await Appointment.findByIdAndUpdate(req.params.id, { estado: 'Cancelada' }, { new: true });
+    if (!appt) return res.status(404).json({ success: false, error: { code: 'APPT_001', message: 'Cita no encontrada' } });
+    res.json({ success: true, data: { id: appt._id, estado: appt.estado }, message: 'Cita cancelada' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { code: 'DB_001', message: error.message } });
+  }
+};
+
+module.exports = { obtenerAppointments, obtenerAppointment, crearAppointment, actualizarAppointment, eliminarAppointment, completarAppointment, cancelarAppointment };
