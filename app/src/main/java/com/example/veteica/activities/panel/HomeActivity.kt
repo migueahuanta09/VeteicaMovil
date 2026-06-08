@@ -31,6 +31,7 @@ import com.example.veteica.adapters.AppointmentAdapter
 import com.example.veteica.models.Appointment
 import com.example.veteica.network.RetrofitClient
 import com.example.veteica.views.PieChartView
+import com.example.veteica.views.BarChartView
 import com.example.veteica.views.LineChartView
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -45,8 +46,9 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var tvUserName: TextView
     private lateinit var tvTotalPets: TextView
     private lateinit var tvTodayAppointments: TextView
-    private lateinit var tvOwnerLegend: TextView
-    private lateinit var tvSpeciesLegend: TextView
+    private lateinit var tvDiseasesLegend: TextView
+    private lateinit var pieChartDiseases: PieChartView
+    private lateinit var barChartSpecies: BarChartView
     private lateinit var lineChartAge: LineChartView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,8 +71,9 @@ class HomeActivity : AppCompatActivity() {
         tvUserName = findViewById(R.id.tvUserName)
         tvTotalPets = findViewById(R.id.tvTotalPets)
         tvTodayAppointments = findViewById(R.id.tvTodayAppointments)
-        tvOwnerLegend = findViewById(R.id.tvOwnerLegend)
-        tvSpeciesLegend = findViewById(R.id.tvSpeciesLegend)
+        tvDiseasesLegend = findViewById(R.id.tvDiseasesLegend)
+        pieChartDiseases = findViewById(R.id.pieChartDiseases)
+        barChartSpecies = findViewById(R.id.barChartSpecies)
         lineChartAge = findViewById(R.id.lineChartAge)
     }
 
@@ -150,17 +153,17 @@ class HomeActivity : AppCompatActivity() {
                 tvTotalPets.text = total.toString()
 
                 val speciesCount = mutableMapOf<String, Int>()
-                val ownerCount = mutableMapOf<String, Int>()
+                val diseasesCount = mutableMapOf<String, Int>()
                 val ageCount = mutableMapOf<String, Int>()
 
                 items?.forEach { item ->
                     val pet = item as? Map<*, *> ?: return@forEach
                     val especie = (pet["especie"] as? String) ?: "Otro"
-                    val dueno = (pet["nombreDueno"] as? String) ?: "Sin dueño"
+                    val enfermedad = obtenerEnfermedadAleatoria()
                     val edad = (pet["edad"] as? Number)?.toInt() ?: 0
 
                     speciesCount[especie] = (speciesCount[especie] ?: 0) + 1
-                    ownerCount[dueno] = (ownerCount[dueno] ?: 0) + 1
+                    diseasesCount[enfermedad] = (diseasesCount[enfermedad] ?: 0) + 1
 
                     when {
                         edad < 1 -> ageCount["0-1 año"] = (ageCount["0-1 año"] ?: 0) + 1
@@ -172,7 +175,31 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
 
-                // Gráfica Lineal de Edades
+                // Gráfica 1: Enfermedades más comunes (PIE)
+                val diseasesColors = listOf(
+                    "#F44336", "#FF9800", "#2196F3", "#4CAF50", "#9C27B0", "#00BCD4"
+                )
+                val diseasesPieData = diseasesCount.entries.mapIndexed { index, entry ->
+                    val pct = entry.value.toFloat() / total * 100
+                    PieChartView.PieData(
+                        "${entry.key} (${entry.value})",
+                        pct,
+                        Color.parseColor(diseasesColors[index % diseasesColors.size])
+                    )
+                }
+                if (diseasesPieData.isNotEmpty()) {
+                    pieChartDiseases.setData(diseasesPieData)
+                }
+                tvDiseasesLegend.text = diseasesCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
+
+                // Gráfica 2: Tipos de mascotas (BARRAS)
+                val speciesData = speciesCount.entries.map { entry ->
+                    val pct = entry.value.toFloat() / total * 100
+                    Pair(entry.key, pct)
+                }.sortedByDescending { it.second }
+                barChartSpecies.setData(speciesData)
+
+                // Gráfica 3: Distribución por Edad (LINEAL)
                 val ageRanges = listOf("0-1 año", "1-3 años", "3-5 años", "5-7 años", "7-9 años", "9+ años")
                 val agePercentages = ageRanges.map { range ->
                     val count = ageCount[range] ?: 0
@@ -180,47 +207,22 @@ class HomeActivity : AppCompatActivity() {
                 }
                 lineChartAge.setData(agePercentages, ageRanges)
                 lineChartAge.setLineColor(Color.parseColor("#2E7D32"))
-
-                // Gráfica de Especies
-                val speciesColors = listOf(
-                    "#4CAF50", "#FF9800", "#2196F3", "#E91E63", "#9C27B0", "#00BCD4"
-                )
-                val speciesPieData = speciesCount.entries.mapIndexed { index, entry ->
-                    val pct = entry.value.toFloat() / total * 100
-                    PieChartView.PieData(
-                        "${entry.key} (${entry.value})",
-                        pct,
-                        Color.parseColor(speciesColors[index % speciesColors.size])
-                    )
-                }
-                val pieChartSpecies = findViewById<PieChartView>(R.id.pieChartSpecies)
-                if (speciesPieData.isNotEmpty()) {
-                    pieChartSpecies.setData(speciesPieData)
-                }
-                tvSpeciesLegend.text = speciesCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-
-                // Gráfica de Dueños
-                val ownerColors = listOf(
-                    "#4CAF50", "#FF9800", "#2196F3", "#E91E63", "#9C27B0",
-                    "#00BCD4", "#FF5722", "#607D8B", "#795548", "#CDDC39"
-                )
-                val ownerPieData = ownerCount.entries.mapIndexed { index, entry ->
-                    val pct = entry.value.toFloat() / total * 100
-                    PieChartView.PieData(
-                        "${entry.key} (${entry.value})",
-                        pct,
-                        Color.parseColor(ownerColors[index % ownerColors.size])
-                    )
-                }
-                val pieChartOwner = findViewById<PieChartView>(R.id.pieChartOwner)
-                if (ownerPieData.isNotEmpty()) {
-                    pieChartOwner.setData(ownerPieData)
-                }
-                tvOwnerLegend.text = ownerCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
             }
         } catch (e: Exception) {
             tvTotalPets.text = "0"
         }
+    }
+
+    private fun obtenerEnfermedadAleatoria(): String {
+        val enfermedades = listOf(
+            "Infección respiratoria",
+            "Problemas digestivos",
+            "Dermatitis",
+            "Otitis",
+            "Parásitos internos",
+            "Problemas dentales"
+        )
+        return enfermedades.random()
     }
 
     private suspend fun loadAppointments(token: String) {

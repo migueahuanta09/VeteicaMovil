@@ -296,92 +296,7 @@
                         android:padding="8dp"/>
                 </androidx.cardview.widget.CardView>
 
-                <!-- GRÁFICAS -->
-                <!-- Fila 1: Mascotas por dueño y Tipos de mascotas -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
-
-                    <!-- Gráfica 1: Mascotas por dueño -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="2dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Mascotas por dueño"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="#333333"
-                                android:gravity="center"
-                                android:layout_marginBottom="12dp"/>
-                            <com.example.veteica.views.PieChartView
-                                android:id="@+id/pieChartOwner"
-                                android:layout_width="150dp"
-                                android:layout_height="150dp"
-                                android:layout_gravity="center"/>
-                            <TextView
-                                android:id="@+id/tvOwnerLegend"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Cargando..."
-                                android:textSize="11sp"
-                                android:textColor="#666666"
-                                android:layout_marginTop="8dp"/>
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- Gráfica 2: Tipos de mascotas -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="2dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Tipos de mascotas"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="#333333"
-                                android:gravity="center"
-                                android:layout_marginBottom="12dp"/>
-                            <com.example.veteica.views.PieChartView
-                                android:id="@+id/pieChartSpecies"
-                                android:layout_width="150dp"
-                                android:layout_height="150dp"
-                                android:layout_gravity="center"/>
-                            <TextView
-                                android:id="@+id/tvSpeciesLegend"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Cargando..."
-                                android:textSize="11sp"
-                                android:textColor="#666666"
-                                android:layout_marginTop="8dp"/>
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
-
-                <!-- Gráfica 3: Distribución por Edad (LINEAL) -->
+                <!-- GRÁFICA 1: ENFERMEDADES MÁS COMUNES (PASTEL) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -402,7 +317,92 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text=" Distribución por Edad de Mascotas"
+                                android:text="🩺 Enfermedades más comunes"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#333333"
+                                android:gravity="center"
+                                android:layout_marginBottom="12dp"/>
+
+                            <com.example.veteica.views.PieChartView
+                                android:id="@+id/pieChartDiseases"
+                                android:layout_width="200dp"
+                                android:layout_height="200dp"
+                                android:layout_gravity="center"/>
+
+                            <TextView
+                                android:id="@+id/tvDiseasesLegend"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textSize="11sp"
+                                android:textColor="#666666"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"/>
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- GRÁFICA 2: TIPOS DE MASCOTAS (BARRAS) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="🐕 Tipos de mascotas"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#333333"
+                                android:gravity="center"
+                                android:layout_marginBottom="12dp"/>
+
+                            <com.example.veteica.views.BarChartView
+                                android:id="@+id/barChartSpecies"
+                                android:layout_width="match_parent"
+                                android:layout_height="220dp"/>
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- GRÁFICA 3: DISTRIBUCIÓN POR EDAD (LINEAL) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="📈 Distribución por Edad de Mascotas"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 android:textColor="#333333"
