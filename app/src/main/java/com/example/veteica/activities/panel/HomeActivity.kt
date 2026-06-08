@@ -2,7 +2,9 @@ package com.example.veteica.activities.panel
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -29,6 +31,7 @@ import com.example.veteica.adapters.AppointmentAdapter
 import com.example.veteica.models.Appointment
 import com.example.veteica.network.RetrofitClient
 import com.example.veteica.views.PieChartView
+import com.example.veteica.views.LineChartView
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -44,6 +47,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var tvTodayAppointments: TextView
     private lateinit var tvOwnerLegend: TextView
     private lateinit var tvSpeciesLegend: TextView
+    private lateinit var lineChartAge: LineChartView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +71,7 @@ class HomeActivity : AppCompatActivity() {
         tvTodayAppointments = findViewById(R.id.tvTodayAppointments)
         tvOwnerLegend = findViewById(R.id.tvOwnerLegend)
         tvSpeciesLegend = findViewById(R.id.tvSpeciesLegend)
+        lineChartAge = findViewById(R.id.lineChartAge)
     }
 
     private fun setupToolbar() {
@@ -81,11 +86,26 @@ class HomeActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_home -> drawerLayout.closeDrawer(GravityCompat.START)
-                R.id.nav_pets -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PetsActivity::class.java)) }
-                R.id.nav_owners -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, OwnersActivity::class.java)) }
-                R.id.nav_appointments -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, AppointmentsActivity::class.java)) }
-                R.id.nav_payments -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, PaymentsActivity::class.java)) }
-                R.id.nav_profile -> { drawerLayout.closeDrawer(GravityCompat.START); startActivity(Intent(this, ProfileActivity::class.java)) }
+                R.id.nav_pets -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    startActivity(Intent(this, PetsActivity::class.java))
+                }
+                R.id.nav_owners -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    startActivity(Intent(this, OwnersActivity::class.java))
+                }
+                R.id.nav_appointments -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    startActivity(Intent(this, AppointmentsActivity::class.java))
+                }
+                R.id.nav_payments -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    startActivity(Intent(this, PaymentsActivity::class.java))
+                }
+                R.id.nav_profile -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                }
                 R.id.nav_logout -> {
                     prefs.edit().clear().apply()
                     startActivity(Intent(this, LoginActivity::class.java))
@@ -131,15 +151,37 @@ class HomeActivity : AppCompatActivity() {
 
                 val speciesCount = mutableMapOf<String, Int>()
                 val ownerCount = mutableMapOf<String, Int>()
+                val ageCount = mutableMapOf<String, Int>()
 
                 items?.forEach { item ->
                     val pet = item as? Map<*, *> ?: return@forEach
                     val especie = (pet["especie"] as? String) ?: "Otro"
                     val dueno = (pet["nombreDueno"] as? String) ?: "Sin dueño"
+                    val edad = (pet["edad"] as? Number)?.toInt() ?: 0
+
                     speciesCount[especie] = (speciesCount[especie] ?: 0) + 1
                     ownerCount[dueno] = (ownerCount[dueno] ?: 0) + 1
+
+                    when {
+                        edad < 1 -> ageCount["0-1 año"] = (ageCount["0-1 año"] ?: 0) + 1
+                        edad in 1..3 -> ageCount["1-3 años"] = (ageCount["1-3 años"] ?: 0) + 1
+                        edad in 3..5 -> ageCount["3-5 años"] = (ageCount["3-5 años"] ?: 0) + 1
+                        edad in 5..7 -> ageCount["5-7 años"] = (ageCount["5-7 años"] ?: 0) + 1
+                        edad in 7..9 -> ageCount["7-9 años"] = (ageCount["7-9 años"] ?: 0) + 1
+                        else -> ageCount["9+ años"] = (ageCount["9+ años"] ?: 0) + 1
+                    }
                 }
 
+                // Gráfica Lineal de Edades
+                val ageRanges = listOf("0-1 año", "1-3 años", "3-5 años", "5-7 años", "7-9 años", "9+ años")
+                val agePercentages = ageRanges.map { range ->
+                    val count = ageCount[range] ?: 0
+                    if (total > 0) (count.toFloat() / total * 100) else 0f
+                }
+                lineChartAge.setData(agePercentages, ageRanges)
+                lineChartAge.setLineColor(Color.parseColor("#2E7D32"))
+
+                // Gráfica de Especies
                 val speciesColors = listOf(
                     "#4CAF50", "#FF9800", "#2196F3", "#E91E63", "#9C27B0", "#00BCD4"
                 )
@@ -148,15 +190,16 @@ class HomeActivity : AppCompatActivity() {
                     PieChartView.PieData(
                         "${entry.key} (${entry.value})",
                         pct,
-                        android.graphics.Color.parseColor(speciesColors[index % speciesColors.size])
+                        Color.parseColor(speciesColors[index % speciesColors.size])
                     )
                 }
-                val pieChartPets = findViewById<PieChartView>(R.id.pieChartPets)
+                val pieChartSpecies = findViewById<PieChartView>(R.id.pieChartSpecies)
                 if (speciesPieData.isNotEmpty()) {
-                    pieChartPets.setData(speciesPieData)
+                    pieChartSpecies.setData(speciesPieData)
                 }
                 tvSpeciesLegend.text = speciesCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
 
+                // Gráfica de Dueños
                 val ownerColors = listOf(
                     "#4CAF50", "#FF9800", "#2196F3", "#E91E63", "#9C27B0",
                     "#00BCD4", "#FF5722", "#607D8B", "#795548", "#CDDC39"
@@ -166,12 +209,12 @@ class HomeActivity : AppCompatActivity() {
                     PieChartView.PieData(
                         "${entry.key} (${entry.value})",
                         pct,
-                        android.graphics.Color.parseColor(ownerColors[index % ownerColors.size])
+                        Color.parseColor(ownerColors[index % ownerColors.size])
                     )
                 }
-                val pieChartDiseases = findViewById<PieChartView>(R.id.pieChartDiseases)
+                val pieChartOwner = findViewById<PieChartView>(R.id.pieChartOwner)
                 if (ownerPieData.isNotEmpty()) {
-                    pieChartDiseases.setData(ownerPieData)
+                    pieChartOwner.setData(ownerPieData)
                 }
                 tvOwnerLegend.text = ownerCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
             }
@@ -192,17 +235,20 @@ class HomeActivity : AppCompatActivity() {
                 val appointments = mutableListOf<Appointment>()
                 items?.forEach { item ->
                     val map = item as? Map<*, *> ?: return@forEach
-                    appointments.add(Appointment(
-                        id = (map["_id"] as? String)?.hashCode() ?: 0,
-                        petName = map["nombreMascota"] as? String ?: "",
-                        date = map["fecha"] as? String ?: "",
-                        time = map["hora"] as? String ?: "",
-                        reason = map["motivo"] as? String ?: "",
-                        status = map["estado"] as? String ?: "Pendiente"
-                    ))
+                    val status = map["estado"] as? String ?: "Pendiente"
+                    if (status == "Pendiente" || status == "Confirmada") {
+                        appointments.add(Appointment(
+                            id = (map["_id"] as? String)?.hashCode() ?: 0,
+                            petName = map["nombreMascota"] as? String ?: "",
+                            date = map["fecha"] as? String ?: "",
+                            time = map["hora"] as? String ?: "",
+                            reason = map["motivo"] as? String ?: "",
+                            status = status
+                        ))
+                    }
                 }
 
-                val pendingCount = appointments.count { it.status == "Pendiente" }
+                val pendingCount = appointments.count()
                 tvTodayAppointments.text = pendingCount.toString()
 
                 val nextAppointments = appointments.take(3)
