@@ -317,7 +317,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="🩺 Enfermedades más comunes"
+                                android:text="📊 Citas por estado"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 android:textColor="#333333"

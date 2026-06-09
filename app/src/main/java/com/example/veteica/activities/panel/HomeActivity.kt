@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -135,7 +134,7 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val petsDeferred = async { loadPetsData(token) }
-            val appointmentsDeferred = async { loadAppointments(token) }
+            val appointmentsDeferred = async { loadAppointmentsData(token) }
             petsDeferred.await()
             appointmentsDeferred.await()
         }
@@ -153,17 +152,14 @@ class HomeActivity : AppCompatActivity() {
                 tvTotalPets.text = total.toString()
 
                 val speciesCount = mutableMapOf<String, Int>()
-                val diseasesCount = mutableMapOf<String, Int>()
                 val ageCount = mutableMapOf<String, Int>()
 
                 items?.forEach { item ->
                     val pet = item as? Map<*, *> ?: return@forEach
                     val especie = (pet["especie"] as? String) ?: "Otro"
-                    val enfermedad = obtenerEnfermedadAleatoria()
                     val edad = (pet["edad"] as? Number)?.toInt() ?: 0
 
                     speciesCount[especie] = (speciesCount[especie] ?: 0) + 1
-                    diseasesCount[enfermedad] = (diseasesCount[enfermedad] ?: 0) + 1
 
                     when {
                         edad < 1 -> ageCount["0-1 año"] = (ageCount["0-1 año"] ?: 0) + 1
@@ -175,35 +171,18 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
 
-                // Gráfica 1: Enfermedades más comunes (PIE)
-                val diseasesColors = listOf(
-                    "#F44336", "#FF9800", "#2196F3", "#4CAF50", "#9C27B0", "#00BCD4"
-                )
-                val diseasesPieData = diseasesCount.entries.mapIndexed { index, entry ->
-                    val pct = entry.value.toFloat() / total * 100
-                    PieChartView.PieData(
-                        "${entry.key} (${entry.value})",
-                        pct,
-                        Color.parseColor(diseasesColors[index % diseasesColors.size])
-                    )
-                }
-                if (diseasesPieData.isNotEmpty()) {
-                    pieChartDiseases.setData(diseasesPieData)
-                }
-                tvDiseasesLegend.text = diseasesCount.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-
-                // Gráfica 2: Tipos de mascotas (BARRAS)
+                // Gráfica barras: Tipos de mascotas
                 val speciesData = speciesCount.entries.map { entry ->
-                    val pct = entry.value.toFloat() / total * 100
+                    val pct = if (total > 0) entry.value.toFloat() / total * 100 else 0f
                     Pair(entry.key, pct)
                 }.sortedByDescending { it.second }
                 barChartSpecies.setData(speciesData)
 
-                // Gráfica 3: Distribución por Edad (LINEAL)
+                // Gráfica lineal: Distribución por edad
                 val ageRanges = listOf("0-1 año", "1-3 años", "3-5 años", "5-7 años", "7-9 años", "9+ años")
                 val agePercentages = ageRanges.map { range ->
                     val count = ageCount[range] ?: 0
-                    if (total > 0) (count.toFloat() / total * 100) else 0f
+                    if (total > 0) count.toFloat() / total * 100 else 0f
                 }
                 lineChartAge.setData(agePercentages, ageRanges)
                 lineChartAge.setLineColor(Color.parseColor("#2E7D32"))
@@ -213,19 +192,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun obtenerEnfermedadAleatoria(): String {
-        val enfermedades = listOf(
-            "Infección respiratoria",
-            "Problemas digestivos",
-            "Dermatitis",
-            "Otitis",
-            "Parásitos internos",
-            "Problemas dentales"
-        )
-        return enfermedades.random()
-    }
-
-    private suspend fun loadAppointments(token: String) {
+    private suspend fun loadAppointmentsData(token: String) {
         try {
             val api = RetrofitClient.instanceWithToken(token)
             val response = api.getAppointments()
@@ -234,10 +201,20 @@ class HomeActivity : AppCompatActivity() {
                 val data = body?.get("data") as? Map<*, *>
                 val items = data?.get("items") as? List<*>
 
+                // Contar por estado para la gráfica
+                val statusCount = mutableMapOf(
+                    "Pendiente" to 0,
+                    "Confirmada" to 0,
+                    "Completada" to 0,
+                    "Cancelada" to 0
+                )
+
                 val appointments = mutableListOf<Appointment>()
                 items?.forEach { item ->
                     val map = item as? Map<*, *> ?: return@forEach
                     val status = map["estado"] as? String ?: "Pendiente"
+                    statusCount[status] = (statusCount[status] ?: 0) + 1
+
                     if (status == "Pendiente" || status == "Confirmada") {
                         appointments.add(Appointment(
                             id = (map["_id"] as? String)?.hashCode() ?: 0,
@@ -250,9 +227,38 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
 
+                val totalCitas = items?.size ?: 1
+
+                // Gráfica PIE: Citas por estado
+                val statusColors = mapOf(
+                    "Pendiente" to "#FF9800",
+                    "Confirmada" to "#2196F3",
+                    "Completada" to "#4CAF50",
+                    "Cancelada" to "#F44336"
+                )
+                val statusPieData = statusCount.entries
+                    .filter { it.value > 0 }
+                    .map { entry ->
+                        val pct = entry.value.toFloat() / totalCitas * 100
+                        PieChartView.PieData(
+                            "${entry.key} (${entry.value})",
+                            pct,
+                            Color.parseColor(statusColors[entry.key] ?: "#9E9E9E")
+                        )
+                    }
+
+                if (statusPieData.isNotEmpty()) {
+                    pieChartDiseases.setData(statusPieData)
+                }
+                tvDiseasesLegend.text = statusCount.entries
+                    .filter { it.value > 0 }
+                    .joinToString("\n") { "${it.key}: ${it.value}" }
+
+                // Contador de citas pendientes
                 val pendingCount = appointments.count()
                 tvTodayAppointments.text = pendingCount.toString()
 
+                // Lista próximas citas
                 val nextAppointments = appointments.take(3)
                 rvNextAppointments.layoutManager = LinearLayoutManager(this@HomeActivity)
                 rvNextAppointments.adapter = AppointmentAdapter(nextAppointments) { appointment ->
