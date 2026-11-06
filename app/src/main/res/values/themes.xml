@@ -13,8 +13,14 @@
         <item name="colorSecondaryVariant">@color/veteica_orange</item>
         <item name="colorOnSecondary">@color/black</item>
 
-        <!-- Status bar color -->
+        <!-- ✅ Color de la barra de estado (arriba, donde está la hora) -->
         <item name="android:statusBarColor">@color/veteica_green_dark</item>
+
+        <!-- ✅ Iconos de la barra de estado en BLANCO (para que se vean sobre el fondo oscuro) -->
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- ✅ Color de la barra de navegación (abajo, donde están los botones) -->
+        <item name="android:navigationBarColor">@color/veteica_green_dark</item>
 
         <!-- Background -->
         <item name="android:windowBackground">@color/white</item>
