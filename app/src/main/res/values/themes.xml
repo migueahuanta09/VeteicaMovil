@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Tema principal de VETEICA -->
-    <style name="Theme.VeteicaApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <style name="Theme.VeteicaApp" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary colors -->
         <item name="colorPrimary">@color/veteica_green</item>
         <item name="colorPrimaryVariant">@color/veteica_green_dark</item>
