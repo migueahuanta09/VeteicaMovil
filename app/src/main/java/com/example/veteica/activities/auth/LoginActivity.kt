@@ -18,24 +18,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
-
-        // ✅ VERIFICAR SI YA HAY UNA SESIÓN ACTIVA
-        val token = prefs.getString("token", "") ?: ""
-
-        if (token.isNotEmpty()) {
-            // Ya hay sesión activa, ir directo al Home
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-            return // Detiene la ejecución aquí
-        }
-
-        // Si no hay token, mostrar el Login normal
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
 
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
