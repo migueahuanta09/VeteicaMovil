@@ -411,7 +411,7 @@ class EditPetActivity : AppCompatActivity() {
 
                         withContext(Dispatchers.Main) {
                             if (response.isSuccessful) {
-                                Toast.makeText(this@EditPetActivity, "Paciente $name actualizado correctamente", Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@EditPetActivity, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                                 finish()
                             } else {
                                 val errorBody = response.errorBody()?.string()

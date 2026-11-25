@@ -124,8 +124,10 @@ class EditAppointmentActivity : AppCompatActivity() {
             date.isEmpty() -> Toast.makeText(this, "Ingresa la fecha", Toast.LENGTH_SHORT).show()
             time.isEmpty() -> Toast.makeText(this, "Ingresa la hora", Toast.LENGTH_SHORT).show()
             ownerName.isEmpty() -> Toast.makeText(this, "Ingresa el nombre del dueño", Toast.LENGTH_SHORT).show()
+            veterinarian.isEmpty() -> Toast.makeText(this, "Ingresa el veterinario", Toast.LENGTH_SHORT).show()
+            reason.isEmpty() -> Toast.makeText(this, "Ingresa el motivo", Toast.LENGTH_SHORT).show()
             else -> {
-                Toast.makeText(this, "Cita de $petName actualizada correctamente\nEstado: $status", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

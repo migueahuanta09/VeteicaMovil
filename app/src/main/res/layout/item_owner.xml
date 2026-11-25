@@ -37,14 +37,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:textColor="#666666"/>
+            android:textColor="#333333"/>
 
         <TextView
             android:id="@+id/tvPetsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:textColor="#999999"/>
+            android:textColor="#333333"/>
 
     </LinearLayout>
 

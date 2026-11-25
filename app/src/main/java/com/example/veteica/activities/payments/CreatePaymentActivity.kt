@@ -99,7 +99,7 @@ class CreatePaymentActivity : AppCompatActivity() {
                 val api = RetrofitClient.instanceWithToken(token)
                 val response = api.createProduct(body)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@CreatePaymentActivity, "Producto $name creado correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreatePaymentActivity, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
                     Toast.makeText(this@CreatePaymentActivity, "Error al crear producto", Toast.LENGTH_SHORT).show()

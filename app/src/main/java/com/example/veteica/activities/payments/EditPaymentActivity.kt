@@ -125,7 +125,7 @@ class EditPaymentActivity : AppCompatActivity() {
                 val api = RetrofitClient.instanceWithToken(token)
                 val response = api.updateProduct(productMongoId, body)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@EditPaymentActivity, "Producto actualizado correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditPaymentActivity, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
                     Toast.makeText(this@EditPaymentActivity, "Error al actualizar producto", Toast.LENGTH_SHORT).show()

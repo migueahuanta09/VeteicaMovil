@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.veteica.R
 import com.example.veteica.models.PendingPayment
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PendingPaymentAdapter(
@@ -57,7 +58,7 @@ class PendingPaymentAdapter(
             tvId.text = payment.id.toString()
             tvPetName.text = payment.petName
             tvServiceName.text = payment.serviceName
-            tvDate.text = payment.date
+            tvDate.text = formatDate(payment.date)
             tvTotal.text = format.format(payment.total)
             tvStatus.text = payment.status
 
@@ -66,6 +67,22 @@ class PendingPaymentAdapter(
             } else {
                 tvStatus.setTextColor(itemView.context.getColor(R.color.veteica_orange))
             }
+        }
+
+        private fun formatDate(rawDate: String): String {
+            val clean = rawDate.trim()
+            if (clean.isEmpty()) return ""
+            val datePart = if (clean.contains("T")) clean.substringBefore("T") else clean
+            val inputFormats = listOf("dd/MM/yyyy", "yyyy-MM-dd", "yyyy/MM/dd", "dd-MM-yyyy")
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            for (pattern in inputFormats) {
+                try {
+                    val parser = SimpleDateFormat(pattern, Locale.getDefault()).apply { isLenient = false }
+                    val parsed = parser.parse(datePart)
+                    if (parsed != null) return outputFormat.format(parsed)
+                } catch (_: Exception) { }
+            }
+            return rawDate
         }
     }
 }

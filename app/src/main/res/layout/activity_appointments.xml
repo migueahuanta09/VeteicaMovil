@@ -153,73 +153,81 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <!-- Encabezados -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:background="#2E7D32"
-                    android:paddingHorizontal="8dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:text="Fecha"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.8"
-                        android:text="Hora"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:text="Paciente"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:text="Dueño"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Veterinario"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0"/>
-
-                <!-- RecyclerView -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvAppointments"
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingHorizontal="4dp"/>
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <!-- Encabezados -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:orientation="horizontal"
+                            android:background="#2E7D32"
+                            android:paddingHorizontal="8dp"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:text="Fecha"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:layout_width="85dp"
+                                android:layout_height="wrap_content"
+                                android:text="Hora"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="wrap_content"
+                                android:text="Paciente"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                android:text="Dueño"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:layout_width="140dp"
+                                android:layout_height="wrap_content"
+                                android:text="Veterinario"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"
+                                android:textSize="12sp"/>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0"/>
+
+                        <!-- RecyclerView -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvAppointments"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
 
             </LinearLayout>
 

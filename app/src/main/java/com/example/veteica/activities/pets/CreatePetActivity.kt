@@ -329,7 +329,7 @@ class CreatePetActivity : AppCompatActivity() {
 
                         withContext(Dispatchers.Main) {
                             if (response.isSuccessful) {
-                                Toast.makeText(this@CreatePetActivity, "Paciente $name creado exitosamente", Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@CreatePetActivity, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                                 finish()
                             } else {
                                 val errorBody = response.errorBody()?.string()

@@ -1,5 +1,6 @@
 package com.example.veteica.activities.appointments
 
+import android.app.TimePickerDialog
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -14,6 +15,8 @@ import com.example.veteica.R
 import com.example.veteica.network.RetrofitClient
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.Locale
 
 class CreateAppointmentActivity : AppCompatActivity() {
 
@@ -57,6 +60,9 @@ class CreateAppointmentActivity : AppCompatActivity() {
         spinnerStatus = findViewById(R.id.spinnerStatus)
         spinnerPet = findViewById(R.id.spinnerPet)
         tvOwnerName = findViewById(R.id.tvOwnerName)
+        etTime.setText("")
+        etTime.isFocusable = false
+        etTime.isClickable = true
     }
 
     private fun setupToolbar() {
@@ -127,7 +133,27 @@ class CreateAppointmentActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         btnBack.setOnClickListener { finish() }
+        etTime.setOnClickListener { showTimePicker() }
         btnCreate.setOnClickListener { createAppointment() }
+    }
+
+    private fun showTimePicker() {
+        val calendar = Calendar.getInstance()
+        TimePickerDialog(
+            this,
+            { _, hourOfDay, minute ->
+                val amPm = if (hourOfDay < 12) "AM" else "PM"
+                val hour12 = when {
+                    hourOfDay == 0 -> 12
+                    hourOfDay > 12 -> hourOfDay - 12
+                    else -> hourOfDay
+                }
+                etTime.setText(String.format(Locale.US, "%02d:%02d %s", hour12, minute, amPm))
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            false
+        ).show()
     }
 
     private fun createAppointment() {
@@ -154,6 +180,36 @@ class CreateAppointmentActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
+                val api = RetrofitClient.instanceWithToken(token)
+                val existingResponse = api.getAppointments()
+                if (!existingResponse.isSuccessful) {
+                    Toast.makeText(this@CreateAppointmentActivity, "Error al verificar citas existentes", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                val existingData = existingResponse.body()?.get("data") as? Map<*, *>
+                val existingItems = existingData?.get("items") as? List<*>
+                val hasConflict = existingItems?.any { item ->
+                    val map = item as? Map<*, *> ?: return@any false
+                    val existingVet = (map["veterinario"] as? String)?.trim() ?: ""
+                    val existingDate = (map["fecha"] as? String)?.trim() ?: ""
+                    val existingTime = (map["hora"] as? String)?.trim() ?: ""
+                    val existingStatus = (map["estado"] as? String)?.trim() ?: ""
+                    !existingStatus.equals("Cancelada", ignoreCase = true) &&
+                        existingVet.equals(veterinarian, ignoreCase = true) &&
+                        existingDate.equals(date, ignoreCase = true) &&
+                        existingTime.equals(time, ignoreCase = true)
+                } == true
+
+                if (hasConflict) {
+                    Toast.makeText(
+                        this@CreateAppointmentActivity,
+                        "El veterinario $veterinarian ya tiene una cita en esa fecha y hora",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@launch
+                }
+
                 val body = mapOf(
                     "nombreMascota" to petName,
                     "nombreDueno" to ownerName,
@@ -164,11 +220,10 @@ class CreateAppointmentActivity : AppCompatActivity() {
                     "diagnostico" to diagnosis,
                     "estado" to status
                 )
-                val api = RetrofitClient.instanceWithToken(token)
                 val response = api.createAppointment(body)
 
                 if (response.isSuccessful) {
-                    Toast.makeText(this@CreateAppointmentActivity, "Cita creada correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateAppointmentActivity, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
                     Toast.makeText(this@CreateAppointmentActivity, "Error al crear cita", Toast.LENGTH_SHORT).show()

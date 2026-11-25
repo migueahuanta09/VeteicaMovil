@@ -112,7 +112,8 @@ class OwnersActivity : AppCompatActivity() {
 
         val headerView = navView.getHeaderView(0)
         val tvNavUserName: TextView = headerView.findViewById(R.id.tvNavUserName)
-        tvNavUserName.text = "Dra. María González"
+        val prefs = getSharedPreferences("veteica_prefs", MODE_PRIVATE)
+        tvNavUserName.text = prefs.getString("user_name", "Veterinario") ?: "Veterinario"
     }
 
     private fun setupRecyclerView() {

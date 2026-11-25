@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Patterns
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -304,6 +305,8 @@ class EditOwnerActivity : AppCompatActivity() {
             phone.isEmpty() -> { Toast.makeText(this, "Ingresa el teléfono", Toast.LENGTH_SHORT).show(); return }
             email.isEmpty() -> { Toast.makeText(this, "Ingresa el correo", Toast.LENGTH_SHORT).show(); return }
             address.isEmpty() -> { Toast.makeText(this, "Ingresa la dirección", Toast.LENGTH_SHORT).show(); return }
+            !phone.matches(Regex("^\\d{10}$")) -> { Toast.makeText(this, "El teléfono debe tener exactamente 10 dígitos", Toast.LENGTH_SHORT).show(); return }
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> { Toast.makeText(this, "Ingresa un correo electrónico válido", Toast.LENGTH_SHORT).show(); return }
         }
 
         if (ownerId.isEmpty()) {
@@ -331,7 +334,7 @@ class EditOwnerActivity : AppCompatActivity() {
                 val response = api.updateOwnerFull(ownerId, body)
 
                 if (response.isSuccessful) {
-                    Toast.makeText(this@EditOwnerActivity, "Dueño actualizado correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditOwnerActivity, "Registro guardado exitosamente", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
                     Toast.makeText(this@EditOwnerActivity, "Error al actualizar", Toast.LENGTH_SHORT).show()

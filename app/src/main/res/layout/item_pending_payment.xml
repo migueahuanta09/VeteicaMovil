@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingVertical="14dp"
@@ -9,51 +9,46 @@
 
     <TextView
         android:id="@+id/tvId"
-        android:layout_width="0dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
         android:textColor="#666666"
         android:textSize="13sp"/>
 
     <TextView
         android:id="@+id/tvPetName"
-        android:layout_width="0dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1.2"
         android:textColor="#333333"
         android:textSize="13sp"
         android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/tvServiceName"
-        android:layout_width="0dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1.2"
         android:textColor="#666666"
         android:textSize="13sp"/>
 
     <TextView
         android:id="@+id/tvDate"
-        android:layout_width="0dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
         android:textColor="#666666"
-        android:textSize="13sp"/>
+        android:textSize="12sp"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/tvTotal"
-        android:layout_width="0dp"
+        android:layout_width="90dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
         android:textColor="#2E7D32"
         android:textSize="13sp"
         android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/tvStatus"
-        android:layout_width="0dp"
+        android:layout_width="95dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
         android:textColor="#FF9800"
         android:textSize="12sp"
         android:background="@drawable/bg_status_rounded"

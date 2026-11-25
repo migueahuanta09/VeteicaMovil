@@ -184,81 +184,88 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:orientation="horizontal"
-                            android:background="#E65100"
-                            android:paddingHorizontal="12dp"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.6"
-                                android:text="ID"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.2"
-                                android:text="Paciente"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.2"
-                                android:text="Servicio"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.8"
-                                android:text="Fecha"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.8"
-                                android:text="Total"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.8"
-                                android:text="Estado"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#E0E0E0"/>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvPendingPayments"
+                        <HorizontalScrollView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false"
-                            android:paddingHorizontal="4dp"/>
+                            android:fillViewport="true">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="48dp"
+                                    android:orientation="horizontal"
+                                    android:background="#E65100"
+                                    android:paddingHorizontal="12dp"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:layout_width="48dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="ID"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="110dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Paciente"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="130dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Servicio"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Fecha"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="90dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Total"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="95dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Estado"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#E0E0E0"/>
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rvPendingPayments"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:nestedScrollingEnabled="false"/>
+
+                            </LinearLayout>
+
+                        </HorizontalScrollView>
 
                     </LinearLayout>
 
@@ -302,63 +309,72 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:orientation="horizontal"
-                            android:background="#2E7D32"
-                            android:paddingHorizontal="12dp"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.8"
-                                android:text="ID"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
-                                android:text="Producto"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.2"
-                                android:text="Existencia"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.2"
-                                android:text="Precio"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#E0E0E0"/>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvProducts"
+                        <HorizontalScrollView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false"
-                            android:paddingHorizontal="4dp"/>
+                            android:fillViewport="true">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="48dp"
+                                    android:orientation="horizontal"
+                                    android:background="#2E7D32"
+                                    android:paddingHorizontal="12dp"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:layout_width="48dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="ID"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="150dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Producto"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="90dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Existencia"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="95dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Precio"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#E0E0E0"/>
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rvProducts"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:nestedScrollingEnabled="false"/>
+
+                            </LinearLayout>
+
+                        </HorizontalScrollView>
 
                     </LinearLayout>
 
@@ -402,63 +418,72 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:orientation="horizontal"
-                            android:background="#FF9800"
-                            android:paddingHorizontal="12dp"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Cantidad"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
-                                android:text="Servicio"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.2"
-                                android:text="Veterinarios"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.2"
-                                android:text="Precio"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:textSize="12sp"/>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#E0E0E0"/>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvServices"
+                        <HorizontalScrollView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false"
-                            android:paddingHorizontal="4dp"/>
+                            android:fillViewport="true">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="48dp"
+                                    android:orientation="horizontal"
+                                    android:background="#FF9800"
+                                    android:paddingHorizontal="12dp"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:layout_width="85dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Cantidad"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="150dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Servicio"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Veterinarios"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                    <TextView
+                                        android:layout_width="95dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Precio"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="12sp"/>
+
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#E0E0E0"/>
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rvServices"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:nestedScrollingEnabled="false"/>
+
+                            </LinearLayout>
+
+                        </HorizontalScrollView>
 
                     </LinearLayout>
 
